@@ -9,9 +9,8 @@ export default function Node(props) {
         y: props.y
     });
 
-    function handleDrag(position) {
+    function handleDrag(e, position) {
         let { x, y } = position;
-        x = x - 112.5, y = y - 75;
         setCoords({ x, y });
     }
 

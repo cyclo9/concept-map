@@ -1,18 +1,12 @@
-.endpoint {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: gray;
-}
-
 .ellipse {
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 225px;
-    height: 150px;
+    width: 225px; /* 112.5 */
+    height: 150px; /* 75 */
     border: 3px solid black;
     border-radius: 50%;
     background-color: white;
+    z-index: 2;
 }

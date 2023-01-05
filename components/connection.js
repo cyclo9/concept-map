@@ -13,39 +13,24 @@ export default function Connection(props) {
         ssr: false,
       })
 
-    const id = useState();
+    const [lineWidth, setLineWidth] = useState(5);
+    const [offsetX, setOffsetX] = useState(112.5);
+    const [offsetY, setOFfsetY] = useState(75);
+    const [lineOffSet, setLineOffSet] = useState(8 + lineWidth);
 
     const [pointA, setPointA] = useState({
-        x: props.x1,
-        y: props.y1
+        x: props.x1 + offsetX,
+        y: props.y1 + offsetY
     });
 
     const [pointB, setPointB] = useState({
-        x: props.x2,
-        y: props.y2
+        x: props.x2 + offsetX,
+        y: props.y2 + offsetY
     });
-
-    function handleDragA(position) {
-        let { x, y } = position;
-        x = x - 15 , y = y - 15;
-        setPointA({ x, y });
-    }
-
-    function handleDragB(position) {
-        let { x, y } = position;
-        x = x - 15 , y = y - 15;
-        setPointB({ x, y });
-    }
 
     return (
         <div>
-            <Draggable position={pointA} onDrag={handleDragA}>
-                <span className={styles.endpoint}></span>
-            </Draggable>
-            <Draggable position={pointB} onDrag={handleDragB}>
-                <span className={styles.endpoint}></span>
-            </Draggable>
-            <Line x0={pointA.x + 12} y0={pointA.y + 12} x1={pointB.x + 12} y1={pointB.y + 12} borderWidth={"2px"} />
+            <Line x0={pointA.x + lineOffSet} y0={pointA.y + lineOffSet} x1={pointB.x + lineOffSet} y1={pointB.y + lineOffSet} borderWidth={lineWidth} />
         </div>
     )
 }
