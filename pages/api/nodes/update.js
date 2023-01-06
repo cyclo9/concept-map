@@ -1,0 +1,19 @@
+import db from "../../../lib/mongo";
+
+export default async function handler(req, res) {
+    const collection = db.collection("nodes");
+
+    const response = req.query;
+
+    const filter = {
+        id: parseInt(response.id)
+    }
+
+    const update = {
+        $set: { location: JSON.parse(response.location) }
+    }
+
+    await collection.updateOne(filter, update);
+
+    res.status(200).json(response);
+}

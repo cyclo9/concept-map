@@ -14,6 +14,7 @@ export default function Connection(props) {
       })
 
     const [lineWidth, setLineWidth] = useState(5);
+
     const [offsetX, setOffsetX] = useState(112.5);
     const [offsetY, setOFfsetY] = useState(75);
     const [lineOffSet, setLineOffSet] = useState(8 + lineWidth);
