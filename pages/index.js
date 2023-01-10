@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import Node from "../components/node";
+import Layout from "../components/layout"
 import db from "../lib/mongo";
 
-export default function App(results) {
-    const data = results.results
+export async function getServerSideProps() {
+
+    const nodeResults = await db.collection("nodes").find().toArray();
+    const connectionResults = await db.collection("connections").find().toArray();
+
+    return {
+        props: {
+            nodes: JSON.parse(JSON.stringify(nodeResults)),
+            connections: JSON.parse(JSON.stringify(connectionResults))
+        }
+    }
+}
+
+
+export default function App(props) {
+    const connections = [
+        { id:"connection-1", from: "node-1", "to": "node-2" }
+    ]
 
     return (
         <div className="App">
@@ -12,18 +28,7 @@ export default function App(results) {
                 <title>Concept Map</title>
             </Head>
 
-            {data.map((entry) => <Node key={entry.id.toString()} id={entry.id} location={entry.location} label={entry.label} entries={entry.label} tasks={entry.tasks} />)}
+            <Layout nodeData={props.nodes} connectionData={connections} />
         </div>
     );
-}
-
-export async function getServerSideProps() {
-    const collection = db.collection("nodes");
-    const results = await collection.find().toArray();
-
-    return {
-        props: {
-            results: JSON.parse(JSON.stringify(results))
-        }
-    }
 }
