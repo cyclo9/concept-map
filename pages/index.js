@@ -24,11 +24,14 @@ export async function getServerSideProps() {
 
 function initDiagram() {
     const $ = go.GraphObject.make;
-    const diagram = $(go.Diagram, {
-        "undoManager.isEnabled": true,
-        model: new go.GraphLinksModel({
-            linkKeyProperty: "key"
-        })
+    const diagram = $(go.Diagram,
+        {
+            "undoManager.isEnabled": true,
+            model: new go.GraphLinksModel({
+                linkKeyProperty: "key"
+            }),
+            initialPosition: go.Point.parse("0 0"),
+            initialAutoScale: go.Diagram.Uniform,
     });
 
     diagram.nodeTemplate =
@@ -63,16 +66,25 @@ function initDiagram() {
     return diagram;
 }
 
-// ##### APP LOGIC #####
-
-async function updateNeuron() {
-    await fetch(`http://localhost:3000/api/nodes/update?id=${id}&location=${JSON.stringify({ x, y })}`);
+// ##### API ROUTES #####
+async function updateNeuronLocation(id, location) {
+    await fetch(`http://localhost:3000/api/neuron/updateLocation?id=${id}&location=${location}`);
 }
 
+// ##### CRUD LOGIC #####
 
 function handleModelChange(changes) {
     // here is where you would make any updates to your React state
-    console.log(changes);
+    if (changes.modifiedNodeData != undefined) {
+        const modifiedNodeData = changes.modifiedNodeData;
+        for (let i = 0; i < modifiedNodeData.length; i++) {
+            let key = modifiedNodeData[i].key;
+            let location = modifiedNodeData[i].location;
+            console.log(key, location);
+
+            updateNeuronLocation(key, location);
+        }
+    }  
 }
 
 export default function App(props) {
