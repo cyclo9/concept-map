@@ -15,5 +15,6 @@ export default async function handler(req, res) {
 
     // await collection.updateOne(filter, update);
 
+    // this just has to exist in order for the api to work
     res.status(200).json(response);
 }

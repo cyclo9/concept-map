@@ -6,22 +6,20 @@ import { ReactDiagram } from "gojs-react";
 import styles from "../styles/app.module.css";
 
 // ##### DATA FETCHING #####
-
 export async function getServerSideProps() {
 
     const nodeResults = await db.collection("nodes").find().toArray();
-    const connectionResults = await db.collection("connections").find().toArray();
+    const axonResults = await db.collection("axons").find().toArray();
 
     return {
         props: {
             nodes: JSON.parse(JSON.stringify(nodeResults)),
-            connections: JSON.parse(JSON.stringify(connectionResults))
+            axons: JSON.parse(JSON.stringify(axonResults))
         }
     }
 }
 
 // ##### DIAGRAM CODE #####
-
 function initDiagram() {
     const $ = go.GraphObject.make;
     const diagram = $(go.Diagram,
@@ -33,7 +31,7 @@ function initDiagram() {
             initialPosition: go.Point.parse("0 0"),
             initialAutoScale: go.Diagram.Uniform,
     });
-
+    // ### NODE TEMPLATE ###
     diagram.nodeTemplate =
         $(go.Node, "Auto",
             new go.Binding("location", "location", go.Point.parse).makeTwoWay(go.Point.stringify),
@@ -43,11 +41,14 @@ function initDiagram() {
                     fill: "white",
                     width: 135,
                     height: 90
-                }),
+            }),
             $(go.TextBlock,
-                new go.Binding("text"))
+                new go.Binding("text", "label"),
+                {
+                    font: "16px Comic Sans MS"
+            })
         );
-    
+    // ### LINK TEMPLATE
     diagram.linkTemplate =
         $(go.Link,
             $(go.Shape,
@@ -56,48 +57,77 @@ function initDiagram() {
                 }
             )
         );
-    
-    diagram.model.addChangedListener((e) => {
-        if (e.propertyName === "CommittedTransaction") {
-            // console.log(e.model.nodeDataArray);
-        }
-    })
+    // ### CONTEXT MENU ###
+    function addNode(e, obj) {
+        // Node Creation
+        const node = { label: "New Node" };
+        diagram.model.addNodeData(node);
+        const part = diagram.findPartForData(node);
+        part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint;
+
+        // Update new node's initial properties
+        const newNode = diagram.model.nodeDataArray.slice(-1)[0]
+        const newKey = "node" + newNode.key.toString()
+        diagram.model.setDataProperty(newNode, "key", newKey)
+
+        // Update Database
+        createNode(newNode.key, newNode.location, newNode.label);
+        console.log(newNode.key, newNode.location, newNode.label);
+    }
+
+    diagram.contextMenu =
+        $(go.Adornment, "Vertical",
+            $("ContextMenuButton",
+                $(go.TextBlock, "Add Neuron",
+                    {
+                        margin: 5,
+                        font: "16px Comic Sans MS"
+                }),
+                { click: addNode })
+            // more ContextMenuButtons would go here
+        ); 
     
     return diagram;
 }
 
 // ##### API ROUTES #####
-async function updateNeuronLocation(id, location) {
-    await fetch(`http://localhost:3000/api/neuron/updateLocation?id=${id}&location=${location}`);
+async function updateNodeLocation(id, location) {
+    await fetch(`http://localhost:3000/api/node/updateLocation?id=${id}&location=${location}`);
+}
+
+async function createNode(id, location, label) {
+    await fetch(`http://localhost:3000/api/node/createNode?id=${id}&location=${location}&label=${label}`);
 }
 
 // ##### CRUD LOGIC #####
-
+let initial = true; // Prevents any changes from being registered the first the diagram is loaded
 function handleModelChange(changes) {
-    // here is where you would make any updates to your React state
-    if (changes.modifiedNodeData != undefined) {
+    if (!initial) {
         const modifiedNodeData = changes.modifiedNodeData;
-        for (let i = 0; i < modifiedNodeData.length; i++) {
-            let key = modifiedNodeData[i].key;
-            let location = modifiedNodeData[i].location;
-            console.log(key, location);
 
-            updateNeuronLocation(key, location);
+        // ### UPDATE NODE LOCATION ###
+        if (modifiedNodeData != undefined) {
+            for (let i = 0; i < modifiedNodeData.length; i++) {
+                let key = modifiedNodeData[i].key;
+                let location = modifiedNodeData[i].location;
+
+                updateNodeLocation(key, location);
+            }
         }
-    }  
+
+        console.log("Changes:", changes)
+    } else { initial = false; }
 }
 
 export default function App(props) {
     const nodes = props.nodes;
-    const connections = props.connections;
+    const axons = props.axons;
 
     const nodeData = [];
-    nodes.map((node) => nodeData.push({ key: node.id, text: node.label, location: node.location }))
-    const [nodeArray, setNodeData] = useState(nodeData);
+    nodes.map((node) => nodeData.push({ key: node.id, label: node.label, location: node.location }))
 
-    const connectionData = [];
-    connections.map((connection) => connectionData.push({ key: connection.id, from: connection.from, to: connection.to }));
-    const [connectionArray, setConnectionArray] = useState(connectionData);
+    const axonData = [];
+    axons.map((axon) => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
 
     return (
         <div className="App">
@@ -108,8 +138,8 @@ export default function App(props) {
             <ReactDiagram
                 initDiagram={initDiagram}
                 divClassName={styles.diagram}
-                nodeDataArray={nodeArray}
-                linkDataArray={connectionArray}
+                nodeDataArray={nodeData}
+                linkDataArray={axonData}
                 onModelChange={handleModelChange}
             />
         </div>
