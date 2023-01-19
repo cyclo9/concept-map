@@ -37,23 +37,40 @@ function initDiagram() {
             new go.Binding("location", "location", go.Point.parse).makeTwoWay(go.Point.stringify),
             $(go.Shape, "Ellipse",
                 {
-                    strokeWidth: 3,
+                    strokeWidth: 5,
                     fill: "white",
                     width: 135,
-                    height: 90
-            }),
-            $(go.TextBlock,
-                new go.Binding("text", "label"),
-                {
-                    font: "16px Comic Sans MS"
-            })
-        );
+                    height: 90,
+                    portId: "",
+                    cursor: "pointer",
+                    fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
+                    toLinkable: true, toLinkableSelfNode: false, toLinkableDuplicates: false
+                }
+            ),
+            $(go.Panel, "Vertical",
+                $(go.TextBlock,
+                    {
+                        font: "18px Comic Sans MS",
+                        width: 90,
+                        editable: true,
+                        textAlign: "center",
+                        verticalAlignment: go.Spot.Center,
+                        isMultiline: true,
+                        wrap: go.TextBlock.WrapFit
+                    },
+                    new go.Binding("text", "label").makeTwoWay()
+                )
+            )
+        )
     // ### LINK TEMPLATE
     diagram.linkTemplate =
         $(go.Link,
+            {
+                relinkableFrom: true, relinkableTo: true
+            },
             $(go.Shape,
                 {
-                    strokeWidth: 3
+                    strokeWidth: 5
                 }
             )
         );
@@ -72,7 +89,6 @@ function initDiagram() {
 
         // Update Database
         createNode(newNode.key, newNode.location, newNode.label);
-        console.log(newNode.key, newNode.location, newNode.label);
     }
 
     diagram.contextMenu =
@@ -91,27 +107,41 @@ function initDiagram() {
 }
 
 // ##### API ROUTES #####
-async function updateNodeLocation(id, location) {
-    await fetch(`http://localhost:3000/api/node/updateLocation?id=${id}&location=${location}`);
-}
-
 async function createNode(id, location, label) {
-    await fetch(`http://localhost:3000/api/node/createNode?id=${id}&location=${location}&label=${label}`);
+    await fetch(`http://localhost:3000/api/node/create?id=${id}&location=${location}&label=${label}`);
 }
 
-// ##### CRUD LOGIC #####
+async function updateNode(id, location, label) {
+    await fetch(`http://localhost:3000/api/node/update?id=${id}&location=${location}&label=${label}`);
+}
+
 let initial = true; // Prevents any changes from being registered the first the diagram is loaded
 function handleModelChange(changes) {
     if (!initial) {
         const modifiedNodeData = changes.modifiedNodeData;
 
-        // ### UPDATE NODE LOCATION ###
+        const insertedLinkKeys = changes.insertedLinkKeys;
+        const modifiedLinkData = changes.modifiedLinkData;
+
+        // ### UPDATE NODE ###
         if (modifiedNodeData != undefined) {
             for (let i = 0; i < modifiedNodeData.length; i++) {
                 let key = modifiedNodeData[i].key;
                 let location = modifiedNodeData[i].location;
+                let label = modifiedNodeData[i].label;
 
-                updateNodeLocation(key, location);
+                updateNode(key, location, label);
+            }
+        }
+
+        // ### INSERT AXON ###
+        if (insertedLinkKeys != undefined) {
+            const newKey = "axon" + insertedLinkKeys[0].toString()
+            if (modifiedLinkData != undefined) {
+                const from = modifiedLinkData[0].from;
+                const to = modifiedLinkData[0].to;
+
+                // updateAxon(newKey, from, to)
             }
         }
 
@@ -124,10 +154,11 @@ export default function App(props) {
     const axons = props.axons;
 
     const nodeData = [];
-    nodes.map((node) => nodeData.push({ key: node.id, label: node.label, location: node.location }))
-
     const axonData = [];
+
+    nodes.map((node) => nodeData.push({ key: node.id, label: node.label, location: node.location }))
     axons.map((axon) => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
+
 
     return (
         <div className="App">

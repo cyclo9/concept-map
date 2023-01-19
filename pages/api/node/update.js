@@ -10,7 +10,10 @@ export default async function handler(req, res) {
     }
 
     const update = {
-        $set: { location: response.location }
+        $set: {
+            location: response.location,
+            label: response.label
+        }
     }
 
     // await collection.updateOne(filter, update);
