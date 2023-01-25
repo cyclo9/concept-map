@@ -1,18 +1,15 @@
 import db from "../../../lib/mongo";
 
 export default async function handler(req, res) {
-    const collection = db.collection("nodes");
+    const collection = db.collection("axons");
 
     const response = req.query;
 
     await collection.insertOne(
         {
             id: response.id,
-            location: response.location,
-            label: response.label,
-            color: response.color,
-            entries: [],
-            tasks: []
+            from: response.from,
+            to: response.to
         }
     )
 

@@ -1,7 +1,7 @@
 import db from "../../../lib/mongo";
 
 export default async function handler(req, res) {
-    const collection = db.collection("nodes");
+    const collection = db.collection("axons");
 
     const response = req.query;
 
@@ -11,9 +11,8 @@ export default async function handler(req, res) {
 
     const update = {
         $set: {
-            location: response.location,
-            label: response.label,
-            color: response.color.toString()
+            from: response.from,
+            to: response.to
         }
     }
 
