@@ -77,6 +77,14 @@ function initDiagram() {
                 contextMenu:
                     $("ContextMenu",
                         $("ContextMenuButton",
+                            $(go.TextBlock, "OPEN",
+                                {
+                                    margin: 2,
+                                    font: "bold 16px Trebuchet MS"
+                                }),
+                            {}
+                        ),
+                        $("ContextMenuButton",
                             $(go.TextBlock, "White",
                                 {
                                     margin: 2,
@@ -154,26 +162,6 @@ function initDiagram() {
             }
         )
         
-    // ### CONTEXT MENU ###
-    function addNode(e, obj) {
-        diagram.commit((d) => {
-            // Node Creation
-            const node = { label: "New Node" };
-            d.model.addNodeData(node);
-            const part = d.findPartForData(node);
-            part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint;
-
-            // Update new node's initial properties
-            const newNode = d.model.nodeDataArray.slice(-1)[0];
-            const newKey = "node" + newNode.key.toString();
-            const newLabel = "Node" + newNode.key.toString();
-            
-            d.model.setDataProperty(newNode, "key", newKey);
-            d.model.setDataProperty(newNode, "label", newLabel);
-            d.model.setDataProperty(newNode, "color", "white");
-        })        
-    }
-
     function changeWhite(e, obj) {
         diagram.commit((d) => {
             const contextMenu = obj.part;
@@ -229,6 +217,26 @@ function initDiagram() {
             diagram.model.set(node, "color", "#bf94e4")
         })
     }
+    
+    // ### CONTEXT MENU ###
+    function addNode(e, obj) {
+        diagram.commit((d) => {
+            // Node Creation
+            const node = { label: "New Node" };
+            d.model.addNodeData(node);
+            const part = d.findPartForData(node);
+            part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint;
+
+            // Update new node's initial properties
+            const newNode = d.model.nodeDataArray.slice(-1)[0];
+            const newKey = "node" + newNode.key.toString();
+            const newLabel = "Node" + newNode.key.toString();
+            
+            d.model.setDataProperty(newNode, "key", newKey);
+            d.model.setDataProperty(newNode, "label", newLabel);
+            d.model.setDataProperty(newNode, "color", "white");
+        })        
+    }
 
     diagram.contextMenu =
         $(go.Adornment, "Vertical",
@@ -274,6 +282,26 @@ async function deleteAxon(id) {
     await fetch(`http://localhost:3000/api/axon/delete?id=${id}`); 
 }
 
+function generateKey(key) {
+    if (typeof (key) != "string") {
+        return "axon" + key.toString()
+    } else {
+        return key
+    }
+}
+
+function colorToString(color) {
+    let colorAsString = [];
+    color.forEach(char => {
+        if (char == "#") {
+            colorAsString.push("%23") // '%23' is the percent encoding for a hash '#'
+        } else {
+            colorAsString.push(char)
+        }
+    });
+    return colorAsString.join("")
+}
+
 let initial = true; // Prevents any changes from being registered the first the diagram is loaded
 function handleModelChange(changes) {
     if (!initial) {
@@ -286,6 +314,19 @@ function handleModelChange(changes) {
         const removedLinkKeys = changes.removedLinkKeys;
 
         // ##### NODES #####
+            // Create
+        if (insertedNodeKeys != undefined) {
+            for (let i = 0; i < modifiedNodeData.length; i++) {
+                const newKey = modifiedNodeData[i].key;
+                const newLocation = modifiedNodeData[i].location;
+                const newLabel = modifiedNodeData[i].label;
+                const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
+
+                createNode(newKey, newLocation, newLabel, color);
+                console.log("Created Node:", newKey);
+            }
+        }
+
             // Update
         if (insertedNodeKeys == undefined) {
             if (modifiedNodeData != undefined) {
@@ -293,43 +334,18 @@ function handleModelChange(changes) {
                     const key = modifiedNodeData[i].key;
                     const location = modifiedNodeData[i].location;
                     const label = modifiedNodeData[i].label;
-                    const color = modifiedNodeData[i].color.toString().split("");
-                    let colorAsString = [];
-                    color.forEach(char => {
-                        if (char == "#") {
-                            colorAsString.push("%23")
-                        } else {
-                            colorAsString.push(char)
-                        }
-                    });
+                    const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
                     
-                    updateNode(key, location, label, colorAsString.join(""));
+                    updateNode(key, location, label, color);
                     console.log("Updated Node:", label, [modifiedNodeData[i]]);
                 }
-            }
-        }
-        
-            // Create
-        if (insertedNodeKeys != undefined) {
-            for (let i = 0; i < modifiedNodeData.length; i++) {
-                const newKey = modifiedNodeData[i].key;
-                const newLocation = modifiedNodeData[i].location;
-                const newLabel = modifiedNodeData[i].label;
-
-                createNode(newKey, newLocation, newLabel, "white");
-                console.log("Created Node:", newKey);
             }
         }
 
             // Delete
         if (removedNodeKeys != undefined) {
             for (let i = 0; i < removedNodeKeys.length; i++) {
-                let key;
-                if (typeof (removedNodeKeys[i]) == "string") {
-                    key = removedNodeKeys[i]
-                } else {
-                    key = "node" + removedNodeKeys[i].toString()
-                }
+                const key = generateKey(removedNodeKeys[i]);
 
                 deleteNode(key);
                 console.log("Deleted Node:", key);
@@ -337,6 +353,18 @@ function handleModelChange(changes) {
         }
 
         // ##### AXONS #####
+            // Create
+        if (insertedLinkKeys != undefined) {
+            for (let i = 0; i < insertedLinkKeys.length; i++) {
+                const key = generateKey(insertedLinkKeys[i]);
+                const from = modifiedLinkData[i].from;
+                const to = modifiedLinkData[i].to;
+
+                createAxon(key, from, to)
+                console.log("Created Axon:", key, {from: from, to: to});
+            }
+        }
+
             // Update
         if (insertedLinkKeys == undefined) {
             if (modifiedLinkData != undefined) {
@@ -349,33 +377,10 @@ function handleModelChange(changes) {
             }
         }
 
-            // Create
-        if (insertedLinkKeys != undefined) {
-            for (let i = 0; i < insertedLinkKeys.length; i++) {
-                let key;
-                if (typeof (insertedLinkKeys[i]) == "string") {
-                    key = insertedLinkKeys[i]
-                } else {
-                    key = "axon" + insertedLinkKeys[i].toString()
-                }
-
-                const from = modifiedLinkData[i].from;
-                const to = modifiedLinkData[i].to;
-
-                createAxon(key, from, to)
-                console.log("Created Axon:", key, {from: from, to: to});
-            }
-        }
-
             // Delete
         if (removedLinkKeys != undefined) {
             for (let i = 0; i < removedLinkKeys.length; i++) {
-                let key;
-                if (typeof (removedLinkKeys[i]) == "string") {
-                    key = removedLinkKeys[i]
-                } else {
-                    key = "axon" + removedLinkKeys[i].toString()
-                }
+                const key = generateKey(removedLinkKeys[i]);
 
                 deleteAxon(key);
                 console.log("Deleted Axon:", key);
