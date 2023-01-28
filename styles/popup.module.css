@@ -1,0 +1,31 @@
+.superposition {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+}
+
+.popup {
+    position: relative;
+    background-color: white;
+    width: 60vw;
+    height: 80vh;
+    border: 5px solid black;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+}
+
+.node {
+    margin: 0 0 0 25px;
+}

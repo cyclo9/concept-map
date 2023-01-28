@@ -4,21 +4,5 @@
     height: 100vh;
     background-color: white;
     display: block;
-}
-
-.superposition {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-}
-
-.popup {
-    background-color: gray;
-    width: 60vw;
-    height: 80vh;
-    border: 5px solid black;
-    border-radius: 25px;
+    z-index: 1;
 }
