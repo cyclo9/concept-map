@@ -11,9 +11,10 @@
 .popup {
     position: relative;
     background-color: white;
-    width: 60vw;
-    height: 80vh;
     border: 5px solid black;
+    border-radius: 25px;
+    width: min(1920px, 90%);
+    height: min(1080px, 90%);
 }
 
 .close {
@@ -28,4 +29,24 @@
 
 .node {
     margin: 0 0 0 25px;
+}
+
+.grid {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin: 5px;
+    height: calc(min(1080px, 90%) - 45px);
+}
+
+.io {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 5px;
+}
+
+.io > span {
+    font-size: 20pt;
+    text-align: center;
 }

@@ -17,6 +17,8 @@ export async function getServerSideProps() {
     }
 }
 
+export const NodeDataContext = createContext(null)
+
 export default function App(props) {
     // * ##### Node & Axon #####
     const nodeData = [];
@@ -31,10 +33,12 @@ export default function App(props) {
             </Head>
 
             <div>
-                <DiagramMemo
-                    nodeDataArray={nodeData}
-                    linkDataArray={axonData}
-                />
+                <NodeDataContext.Provider value={props.nodes}>
+                    <DiagramMemo
+                        nodeDataArray={nodeData}
+                        linkDataArray={axonData}
+                    />
+                </NodeDataContext.Provider>
             </div>
         </div>
     );

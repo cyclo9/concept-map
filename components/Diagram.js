@@ -252,9 +252,9 @@ export default function Diagram(props) {
     }
     
     // * ##### Event Handler #####
-    let initial = true; // Prevents any changes from being registered the first the diagram is loaded
+    const initial = useRef(1); // Prevents any changes from being registered the first the diagram is loaded
     function handleModelChange(changes) {
-        if (!initial) {
+        if (!initial.current) {
             const modifiedNodeData = changes.modifiedNodeData;
             const insertedNodeKeys = changes.insertedNodeKeys;
             const removedNodeKeys = changes.removedNodeKeys;
@@ -336,23 +336,25 @@ export default function Diagram(props) {
                     console.log("Deleted Axon:", key);
                 }
             }
-        } else { initial = false; }
+        } else { initial.current = 0; }
     }
 
     // * ##### Popup ######
 
     const popup = useRef(null);
-    const isOpen = useRef(0);
+    const [isOpen, setIsOpen] = useState(0);
     const [node, setNode] = useState(null);
 
     function handlePopup(node) {
-        setNode(node.label);
-        if (!isOpen.current) {
+        setNode(node);
+        if (!isOpen) {
             popup.current.style.visibility = "visible"
-        } else if (isOpen.current) {
+        } else if (isOpen) {
             popup.current.style.visibility = "hidden"
         }
-        isOpen.current = !isOpen.current;
+        setIsOpen(!isOpen);
+
+        
     }
 
     return (
@@ -364,10 +366,12 @@ export default function Diagram(props) {
                 nodeDataArray={props.nodeDataArray}
                 linkDataArray={props.linkDataArray}
             />
+
             <div ref={popup} style={{ visibility: "hidden" }}>
                 <Popup
                     handlePopup={handlePopup}
                     node={node}
+                    status={isOpen}
                 />
             </div>
         </>
