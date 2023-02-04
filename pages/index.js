@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, createContext, memo} from "react";
 import Head from "next/head";
 import db from "../lib/mongo";
 
-import DiagramMemo from "../components/Diagram";
+import Diagram from "../components/Diagram";
 
 // * ##### DATA FETCHING #####
 export async function getServerSideProps() {
@@ -23,7 +23,7 @@ export default function App(props) {
     // * ##### Node & Axon #####
     const nodeData = [];
     const axonData = [];
-    props.nodes.map((node) => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color}))
+    props.nodes.map((node) => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color, entries: node.entries, tasks: node.tasks }))
     props.axons.map((axon) => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
 
     return (
@@ -33,12 +33,10 @@ export default function App(props) {
             </Head>
 
             <div>
-                <NodeDataContext.Provider value={props.nodes}>
-                    <DiagramMemo
-                        nodeDataArray={nodeData}
-                        linkDataArray={axonData}
-                    />
-                </NodeDataContext.Provider>
+                <Diagram
+                    nodeDataArray={nodeData}
+                    linkDataArray={axonData}
+                />
             </div>
         </div>
     );

@@ -1,49 +1,22 @@
-import { useState, useEffect, useRef, useContext } from "react"
+import { useState, useEffect, useRef } from "react"
 import styles from "../styles/popup.module.css"
-
-import { NodeDataContext } from "../pages";
+import Task from "./Task";
 
 export default function Popup(props) {
-    const background = useRef(null);
-    const nodeData = useContext(NodeDataContext);
-
     const id = useRef("");
     const [label, setLabel] = useState("");
-    const [entries, setEntries] = useState([]);
-    const [tasks, setTasks] = useState([])
+    const [tasks, setTasks] = useState([]);
 
-    useEffect(() => {
-        try {
+    useEffect(
+        () => {
             id.current = props.node.key;
             setLabel(props.node.label);
-        } catch (e) { }
-        
-        retrieveTasks();
-        handleBackground();
-    }, [props])
-
-    function handleBackground() {
-        switch (props.status) {
-            case 0:
-                background.current.style.backgroundColor = "#00000099";
-                break;
-            case 1:
-                background.current.style.backgroundColor = "#ffffff";
-                break;
-        }
-    }
-
-    function retrieveTasks() {
-        for (let i = 0; i < nodeData.length; i++) {
-            if (nodeData[i].id == id.current) {
-                setTasks(nodeData[i].tasks);
-            }
-        }
-    }
-    
+            setTasks(props.node.tasks);
+        }, [props] // Runs only when props change
+    )
     return (
         <>
-            <div ref={background} className={styles.superposition}>
+            <div className={styles.superposition}>
                 <div className={styles.popup}>
                     {/* // * ### Close Button ### */}
                     <button className={styles.close} type="button" onClick={props.handlePopup}>
@@ -65,6 +38,12 @@ export default function Popup(props) {
                         {/* //* ### Tasks ### */}
                         <div className={styles.io} style={{borderLeft: "2px solid black"}}>
                             <span>Tasks</span>
+                            {tasks.map((task) =>
+                                <Task
+                                    key={task.id}
+                                    data={task.data}
+                                    status={task.status}
+                                />)}
                         </div>
                     </div>
                 </div>

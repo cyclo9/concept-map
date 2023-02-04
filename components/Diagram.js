@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import styles from "../styles/diagram.module.css";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
@@ -153,6 +153,7 @@ export default function Diagram(props) {
                 }
         )
         
+        // * ### OPEN SESAME ###
         function open(e, obj) {
             handlePopup(obj.part.data);
         }
@@ -272,7 +273,7 @@ export default function Diagram(props) {
                     const newLabel = modifiedNodeData[i].label;
                     const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
 
-                    createNode(newKey, newLocation, newLabel, color);
+                    // createNode(newKey, newLocation, newLabel, color);
                     console.log("Created Node:", newKey);
                 }
             }
@@ -286,7 +287,7 @@ export default function Diagram(props) {
                         const label = modifiedNodeData[i].label;
                         const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
                         
-                        updateNode(key, location, label, color);
+                        // updateNode(key, location, label, color);
                         console.log("Updated Node:", label, [modifiedNodeData[i]]);
                     }
                 }
@@ -297,7 +298,7 @@ export default function Diagram(props) {
                 for (let i = 0; i < removedNodeKeys.length; i++) {
                     const key = generateKey(removedNodeKeys[i]);
 
-                    deleteNode(key);
+                    // deleteNode(key);
                     console.log("Deleted Node:", key);
                 }
             }
@@ -310,7 +311,7 @@ export default function Diagram(props) {
                     const from = modifiedLinkData[i].from;
                     const to = modifiedLinkData[i].to;
 
-                    createAxon(key, from, to)
+                    // createAxon(key, from, to)
                     console.log("Created Axon:", key, { from: from, to: to });
                 }
             }
@@ -322,7 +323,7 @@ export default function Diagram(props) {
                     const from = modifiedLinkData[0].from;
                     const to = modifiedLinkData[0].to;
 
-                    updateAxon(key, from, to)
+                    // updateAxon(key, from, to)
                     console.log("Updated Axon:", key, { from: from, to: to })
                 }
             }
@@ -332,7 +333,7 @@ export default function Diagram(props) {
                 for (let i = 0; i < removedLinkKeys.length; i++) {
                     const key = generateKey(removedLinkKeys[i]);
 
-                    deleteAxon(key);
+                    // deleteAxon(key);
                     console.log("Deleted Axon:", key);
                 }
             }
@@ -340,21 +341,12 @@ export default function Diagram(props) {
     }
 
     // * ##### Popup ######
-
-    const popup = useRef(null);
     const [isOpen, setIsOpen] = useState(0);
     const [node, setNode] = useState(null);
 
     function handlePopup(node) {
         setNode(node);
-        if (!isOpen) {
-            popup.current.style.visibility = "visible"
-        } else if (isOpen) {
-            popup.current.style.visibility = "hidden"
-        }
         setIsOpen(!isOpen);
-
-        
     }
 
     return (
@@ -367,13 +359,13 @@ export default function Diagram(props) {
                 linkDataArray={props.linkDataArray}
             />
 
-            <div ref={popup} style={{ visibility: "hidden" }}>
-                <Popup
+            {
+                isOpen && <Popup
                     handlePopup={handlePopup}
                     node={node}
                     status={isOpen}
                 />
-            </div>
+            }
         </>
     );
 }
