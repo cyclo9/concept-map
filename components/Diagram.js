@@ -52,7 +52,7 @@ export default function Diagram(props) {
                 $(go.Panel, "Vertical",
                     $(go.TextBlock,
                         {
-                            font: "18px Comic Sans MS",
+                            font: "14pt Itim",
                             width: 90,
                             editable: true,
                             textAlign: "center",
@@ -69,8 +69,8 @@ export default function Diagram(props) {
                             $("ContextMenuButton",
                                 $(go.TextBlock, "[Open]",
                                     {
-                                        margin: 3,
-                                        font: "bold 14px Fira Code",
+                                        margin: 5,
+                                        font: "bold 12pt Fira Code",
                                         stroke: "black",
                                     }),
                                 { click: open }
@@ -79,7 +79,7 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "White",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeWhite }
                             ),
@@ -90,7 +90,7 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "Red",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeRed }
                             ),
@@ -101,7 +101,7 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "Orange",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeOrange }
                             ),
@@ -112,18 +112,18 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "Yellow",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeYellow }
                             ),
                             $("ContextMenuButton",
                                 {
-                                    "_buttonFillOver": "lightgreen"
+                                    "_buttonFillOver": "#8fef8f"
                                 },
                                 $(go.TextBlock, "Green",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeGreen }
                             ),
@@ -134,7 +134,7 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "Blue",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changeBlue }
                             ),
@@ -145,7 +145,7 @@ export default function Diagram(props) {
                                 $(go.TextBlock, "Purple",
                                     {
                                         margin: 2,
-                                        font: "12px Comic Sans MS"
+                                        font: "12pt Itim"
                                     }),
                                 { click: changePurple }
                             ),
@@ -155,7 +155,7 @@ export default function Diagram(props) {
         
         // * ### OPEN SESAME ###
         function open(e, obj) {
-            handlePopup(obj.part.data);
+            togglePopup(obj.part.data);
         }
 
         function changeWhite(e, obj) {
@@ -194,7 +194,7 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "lightgreen")
+                diagram.model.set(node, "color", "#8fef8f")
             })
         }
 
@@ -215,6 +215,18 @@ export default function Diagram(props) {
         }
         
         // * ### CONTEXT MENU ###
+        diagram.contextMenu =
+            $(go.Adornment, "Vertical",
+                $("ContextMenuButton",
+                    $(go.TextBlock, "[Create]",
+                        {
+                            margin: 5,
+                            font: "bold 12pt Fira Code"
+                        }),
+                    { click: addNode })
+                // more ContextMenuButtons would go here
+            );
+    
         function addNode(e, obj) {
             diagram.commit((d) => {
                 // Node Creation
@@ -231,29 +243,17 @@ export default function Diagram(props) {
                 d.model.set(newNode, "key", newKey);
                 d.model.set(newNode, "label", newLabel);
                 d.model.set(newNode, "color", "white");
+                d.model.set(newNode, "entries", []);
+                d.model.set(newNode, "tasks", []);
             })
         }
 
-        diagram.contextMenu =
-            $(go.Adornment, "Vertical",
-                $("ContextMenuButton",
-                    {
-                        "_buttonFillOver": "lightgreen"
-                    },
-                    $(go.TextBlock, "[Create]",
-                        {
-                            margin: 5,
-                            font: "bold 14px Fira Code"
-                        }),
-                    { click: addNode })
-                // more ContextMenuButtons would go here
-            );
         
         return diagram;
     }
     
     // * ##### Event Handler #####
-    const initial = useRef(1); // Prevents any changes from being registered the first the diagram is loaded
+    const initial = useRef(1); // Prevents any changes from being registered when the diagram is first loaded
     function handleModelChange(changes) {
         if (!initial.current) {
             const modifiedNodeData = changes.modifiedNodeData;
@@ -273,8 +273,8 @@ export default function Diagram(props) {
                     const newLabel = modifiedNodeData[i].label;
                     const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
 
-                    // createNode(newKey, newLocation, newLabel, color);
-                    console.log("Created Node:", newKey);
+                    createNode(newKey, newLocation, newLabel, color);
+                    console.log("C-N:", { id: newKey }, [modifiedNodeData[i]]);
                 }
             }
 
@@ -287,8 +287,8 @@ export default function Diagram(props) {
                         const label = modifiedNodeData[i].label;
                         const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
                         
-                        // updateNode(key, location, label, color);
-                        console.log("Updated Node:", label, [modifiedNodeData[i]]);
+                        updateNode(key, location, label, color);
+                        console.log("U-N:", { label: label }, [modifiedNodeData[i]]);
                     }
                 }
             }
@@ -298,8 +298,8 @@ export default function Diagram(props) {
                 for (let i = 0; i < removedNodeKeys.length; i++) {
                     const key = generateKey(removedNodeKeys[i]);
 
-                    // deleteNode(key);
-                    console.log("Deleted Node:", key);
+                    deleteNode(key);
+                    console.log("D-N:", { id: key });
                 }
             }
 
@@ -311,8 +311,8 @@ export default function Diagram(props) {
                     const from = modifiedLinkData[i].from;
                     const to = modifiedLinkData[i].to;
 
-                    // createAxon(key, from, to)
-                    console.log("Created Axon:", key, { from: from, to: to });
+                    createAxon(key, from, to)
+                    console.log("C-A:", { id: key }, { from: from, to: to });
                 }
             }
 
@@ -323,8 +323,8 @@ export default function Diagram(props) {
                     const from = modifiedLinkData[0].from;
                     const to = modifiedLinkData[0].to;
 
-                    // updateAxon(key, from, to)
-                    console.log("Updated Axon:", key, { from: from, to: to })
+                    updateAxon(key, from, to)
+                    console.log("U-A:", { id: key }, { from: from, to: to })
                 }
             }
 
@@ -333,8 +333,8 @@ export default function Diagram(props) {
                 for (let i = 0; i < removedLinkKeys.length; i++) {
                     const key = generateKey(removedLinkKeys[i]);
 
-                    // deleteAxon(key);
-                    console.log("Deleted Axon:", key);
+                    deleteAxon(key);
+                    console.log("D-A:", { id: key });
                 }
             }
         } else { initial.current = 0; }
@@ -344,7 +344,7 @@ export default function Diagram(props) {
     const [isOpen, setIsOpen] = useState(0);
     const [node, setNode] = useState(null);
 
-    function handlePopup(node) {
+    function togglePopup(node) {
         setNode(node);
         setIsOpen(!isOpen);
     }
@@ -361,7 +361,7 @@ export default function Diagram(props) {
 
             {
                 isOpen && <Popup
-                    handlePopup={handlePopup}
+                    handlePopup={togglePopup}
                     node={node}
                     status={isOpen}
                 />

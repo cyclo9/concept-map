@@ -1,5 +1,9 @@
+@font-face {
+    font-family: "Itim";
+    src: url("Itim/Itim-Regular.ttf");
+}
+
 body {
     position: relative;
-    font-family: "Comic Sans MS";
-    font-size: 12pt;
+    font-family: "Itim";
 }

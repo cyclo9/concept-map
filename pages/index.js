@@ -23,8 +23,8 @@ export default function App(props) {
     // * ##### Node & Axon #####
     const nodeData = [];
     const axonData = [];
-    props.nodes.map((node) => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color, entries: node.entries, tasks: node.tasks }))
-    props.axons.map((axon) => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
+    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color, entries: node.entries, tasks: node.tasks }))
+    props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
 
     return (
         <div className="App">
