@@ -27,7 +27,7 @@ export function deleteAxon(id) {
 // * ##### ENTRIES #####
 
 // * ##### TASKS #####
-export async function readTaskData(id) {
+export async function readTaskList(id) {
     const req = await fetch(`http://localhost:3000/api/tasks?id=${id}`, {
         method: "GET"
     })
