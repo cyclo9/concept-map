@@ -1,9 +1,9 @@
 // * ##### NODES #####
 export function createNode(id, location, label, color) {
-    fetch(`http://localhost:3000/api/node/create?id=${id}&location=${location}&label=${label}&color=${color}`);
+    fetch(`http://localhost:3000/api/node/create?&id=${id}&location=${location}&label=${label}&color=${color}`);
     }
 
-export function updateNode(id, location, label, color, tasks) {
+export function updateNode(id, location, label, color) {
     fetch(`http://localhost:3000/api/node/update?id=${id}&location=${location}&label=${label}&color=${color}`);
 }
 

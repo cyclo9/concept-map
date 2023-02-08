@@ -3,9 +3,10 @@ import styles from "../styles/diagram.module.css";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../pages/api/routes";
-import { generateKey, colorToString } from "../lib/properties";
+import { colorToString } from "../lib/color";
 
 import Popup from "./Popup";
+import { generateId } from "../lib/id";
 
 export default function Diagram(props) {
 
@@ -229,7 +230,7 @@ export default function Diagram(props) {
     
         function addNode(e, obj) {
             diagram.commit((d) => {
-                // Node Creation
+                // create node at cursor
                 const node = { label: "New Node" };
                 d.model.addNodeData(node);
                 const part = d.findPartForData(node);
@@ -237,7 +238,7 @@ export default function Diagram(props) {
 
                 // Update new node's initial properties
                 const newNode = d.model.nodeDataArray.slice(-1)[0];
-                const newKey = "node" + newNode.key.toString();
+                const newKey = generateId(Math.pow(2, 8))
                 const newLabel = "Node" + newNode.key.toString();
                 
                 d.model.set(newNode, "key", newKey);
@@ -248,14 +249,20 @@ export default function Diagram(props) {
             })
         }
 
+        diagram.addDiagramListener("LinkDrawn", (e) => {
+            // Generates an ID for the new link
+            const newLink = e.diagram.model.linkDataArray.slice(-1)[0]
+            e.diagram.model.set(newLink, "key", generateId(Math.pow(2, 8)))
+        })
         
         return diagram;
     }
     
     // * ##### Event Handler #####
-    const initial = useRef(1); // Prevents any changes from being registered when the diagram is first loaded
+    // model inserts nodes and links when the page first lods
+    const initial = useRef(0); 
     function handleModelChange(changes) {
-        if (!initial.current) {
+        if (initial.current) {
             const modifiedNodeData = changes.modifiedNodeData;
             const insertedNodeKeys = changes.insertedNodeKeys;
             const removedNodeKeys = changes.removedNodeKeys;
@@ -274,7 +281,7 @@ export default function Diagram(props) {
                     const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
 
                     createNode(newKey, newLocation, newLabel, color);
-                    console.log("C-N:", { id: newKey }, [modifiedNodeData[i]]);
+                    console.log("C-N:", [modifiedNodeData[i]]);
                 }
             }
 
@@ -296,7 +303,7 @@ export default function Diagram(props) {
             // Delete
             if (removedNodeKeys != undefined) {
                 for (let i = 0; i < removedNodeKeys.length; i++) {
-                    const key = generateKey(removedNodeKeys[i]);
+                    const key = removedNodeKeys[i];
 
                     deleteNode(key);
                     console.log("D-N:", { id: key });
@@ -307,12 +314,12 @@ export default function Diagram(props) {
             // Create
             if (insertedLinkKeys != undefined) {
                 for (let i = 0; i < insertedLinkKeys.length; i++) {
-                    const key = generateKey(insertedLinkKeys[i]);
+                    const key = modifiedLinkData[i].key;
                     const from = modifiedLinkData[i].from;
                     const to = modifiedLinkData[i].to;
 
                     createAxon(key, from, to)
-                    console.log("C-A:", { id: key }, { from: from, to: to });
+                    console.log("C-A:", { from: from, to: to });
                 }
             }
 
@@ -331,13 +338,14 @@ export default function Diagram(props) {
             // Delete
             if (removedLinkKeys != undefined) {
                 for (let i = 0; i < removedLinkKeys.length; i++) {
-                    const key = generateKey(removedLinkKeys[i]);
+                    console.log(removedLinkKeys);
+                    const key = removedLinkKeys[i];
 
                     deleteAxon(key);
                     console.log("D-A:", { id: key });
                 }
             }
-        } else { initial.current = 0; }
+        } else { initial.current = 1; }
     }
 
     // * ##### Popup ######
@@ -363,7 +371,6 @@ export default function Diagram(props) {
                 isOpen && <Popup
                     handlePopup={togglePopup}
                     node={node}
-                    status={isOpen}
                 />
             }
         </>

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react"
 import styles from "../styles/popup.module.css"
 import Task from "./Task";
 
-import { generateTaskId } from "../lib/properties";
 import { readTaskList, updateTaskList } from "../pages/api/routes";
+import { generateId } from "../lib/id";
 
 export default function Popup(props) {
     const id = useRef("");
@@ -21,18 +21,13 @@ export default function Popup(props) {
             setTasks(res);
         }
         fetchData();
-
+        
         color.current.style.backgroundColor = props.node.color;
     }, [])
 
     // * ### Add Tasks ###
     function addTask() {
-        let newId;
-        try {
-            newId = "task-" + generateTaskId(tasks[0].id);
-        } catch (e) {
-            newId = "task-0"
-        }
+        const newId = generateId(Math.pow(2, 8));
         const newTask = {
             id: newId,
             data: "",

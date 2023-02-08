@@ -2,13 +2,18 @@ import db from "../../lib/mongo";
 
 export default async function handler(req, res) {
     const collection = db.collection("nodes");
-    const response = req;
 
     // * ### Read ###
     if (req.method === "GET") {
         const response = req.query;
         const node = await collection.find({ id: response.id }).toArray();
-        const tasks = node[0].tasks;
+
+        let tasks;
+        try {
+            tasks = node[0].tasks;
+        } catch (e) {
+            tasks = [];
+        }
 
         res.status(200).json(tasks);
     }
