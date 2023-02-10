@@ -1,15 +1,13 @@
 import { useState, useRef } from "react";
-import styles from "../styles/diagram.module.css";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
-import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../pages/api/routes";
-import { colorToString } from "../lib/color";
 
+import styles from "../styles/diagram.module.css";
 import Popup from "./Popup";
+import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../lib/api"
 import { generateId } from "../lib/id";
 
 export default function Diagram(props) {
-
     // * ##### Diagram #####
     function initDiagram() {
         const $ = go.GraphObject.make;
@@ -40,7 +38,7 @@ export default function Diagram(props) {
                 $(go.Shape, "Ellipse",
                     {
                         strokeWidth: 3,
-                        fill: "white",
+                        fill: "#ffffff",
                         width: 135,
                         height: 90,
                         portId: "",
@@ -77,6 +75,9 @@ export default function Diagram(props) {
                                 { click: open }
                             ),
                             $("ContextMenuButton",
+                                {
+                                    "_buttonFillOver": "#FFFFFF"
+                                },
                                 $(go.TextBlock, "White",
                                     {
                                         margin: 2,
@@ -130,7 +131,7 @@ export default function Diagram(props) {
                             ),
                             $("ContextMenuButton",
                                 {
-                                    "_buttonFillOver": "lightblue"
+                                    "_buttonFillOver": "#87cefa"
                                 },
                                 $(go.TextBlock, "Blue",
                                     {
@@ -163,7 +164,7 @@ export default function Diagram(props) {
             diagram.commit((d) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                d.model.set(node, "color", "white")
+                d.model.set(node, "color", "#ffffff")
             })
         }
 
@@ -203,7 +204,7 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "lightskyblue")
+                diagram.model.set(node, "color", "#87cefa")
             })
         }
 
@@ -243,7 +244,7 @@ export default function Diagram(props) {
                 
                 d.model.set(newNode, "key", newKey);
                 d.model.set(newNode, "label", newLabel);
-                d.model.set(newNode, "color", "white");
+                d.model.set(newNode, "color", "#ffffff");
                 d.model.set(newNode, "entries", []);
                 d.model.set(newNode, "tasks", []);
             })
@@ -278,7 +279,7 @@ export default function Diagram(props) {
                     const newKey = modifiedNodeData[i].key;
                     const newLocation = modifiedNodeData[i].location;
                     const newLabel = modifiedNodeData[i].label;
-                    const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
+                    const color = modifiedNodeData[i].color; // splits each char of the color into an array
 
                     createNode(newKey, newLocation, newLabel, color);
                     console.log("C-N:", [modifiedNodeData[i]]);
@@ -292,7 +293,7 @@ export default function Diagram(props) {
                         const key = modifiedNodeData[i].key;
                         const location = modifiedNodeData[i].location;
                         const label = modifiedNodeData[i].label;
-                        const color = colorToString(modifiedNodeData[i].color.split("")); // splits each char of the color into an array
+                        const color = modifiedNodeData[i].color;
                         
                         updateNode(key, location, label, color);
                         console.log("U-N:", { label: label }, [modifiedNodeData[i]]);

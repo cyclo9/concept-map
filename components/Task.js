@@ -10,15 +10,7 @@ export default function Task(props) {
     }, [props.status])
 
     function updateStatus(e) {
-        props.handleUpdateTaskStatus(props.id);
-        // switch (status) {
-        //     case 0:
-        //         setStatus(1);
-        //         break;
-        //     case 1:
-        //         setStatus(0);
-        //         break;
-        // }
+        props.updateTaskStatus(props.id);
     }
     
     function updateInputValue(e) {
@@ -27,11 +19,11 @@ export default function Task(props) {
 
     // Task data will only be uploaded with the Enter key (keyCode = 13) is pressed
     function updateTaskData(e) {
-        e.keyCode === 13 && props.handleUpdateTaskData(props.id, taskData);
+        e.keyCode === 13 && props.updateTaskData(props.id, taskData);
     }
 
     function deleteTask(e) {
-        props.handleDeleteTask(props.id);
+        props.deleteTask(props.id);
     }
 
     return (

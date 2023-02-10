@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, createContext, memo} from "react";
 import Head from "next/head";
-import db from "../lib/mongo";
 
+import db from "../lib/mongo";
 import Diagram from "../components/Diagram";
 
 // * ##### DATA FETCHING #####
@@ -17,13 +16,11 @@ export async function getServerSideProps() {
     }
 }
 
-export const NodeDataContext = createContext(null)
-
 export default function App(props) {
     // * ##### Node & Axon #####
     const nodeData = [];
     const axonData = [];
-    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color, entries: node.entries, tasks: node.tasks }))
+    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color }))
     props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
 
     return (

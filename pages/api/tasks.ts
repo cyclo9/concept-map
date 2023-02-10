@@ -1,26 +1,24 @@
 import db from "../../lib/mongo";
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
+    interface Response {
+        id: string,
+        tasks: string[]
+    }
+
     const collection = db.collection("nodes");
 
     // * ### Read ###
     if (req.method === "GET") {
-        const response = req.query;
+        const response: Response = req.query;
         const node = await collection.find({ id: response.id }).toArray();
-
-        let tasks;
-        try {
-            tasks = node[0].tasks;
-        } catch (e) {
-            tasks = [];
-        }
-
+        const tasks = node[0].tasks;
         res.status(200).json(tasks);
     }
 
     // * ### Create, Update, Delete ###
     if (req.method === "PUT") {
-        const response = req.body;
+        const response: Response = req.body;
         const filter = {
             id: response.id
         }
@@ -35,6 +33,4 @@ export default async function handler(req, res) {
 
         res.status(200).json(response);
     }
-
-    // this just has to exist in order for the api to work
 }

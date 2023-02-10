@@ -1,32 +1,32 @@
 import { useState, useEffect, useRef } from "react"
+import useSWR from "swr";
+
 import styles from "../styles/popup.module.css"
 import Task from "./Task";
-
-import { readTaskList, updateTaskList } from "../pages/api/routes";
+import Loading from "./Loading";
+import { updateTasks } from "../lib/api";
 import { generateId } from "../lib/id";
 
 export default function Popup(props) {
-    const id = useRef("");
-    const [label, setLabel] = useState("");
+    const id = props.node.key;
+    const label = props.node.label;
     const [tasks, setTasks] = useState([]);
     const color = useRef(null);
 
-    // * useEffect
+    // * ### Fetching data ###
+    const fetcher = (url) => fetch(url, {
+        method: "GET"
+    }).then(res => res.json())
+    const { data, error, isLoading } = useSWR(`/api/tasks?id=${id}`, fetcher);
+
+    // * ### useEffect ###
     useEffect(() => {
-        id.current = props.node.key;
-        setLabel(props.node.label);
-
-        async function fetchData() {
-            const res = await readTaskList(id.current);
-            setTasks(res);
-        }
-        fetchData();
-        
+        if (data != undefined) setTasks(data);
         color.current.style.backgroundColor = props.node.color;
-    }, [])
-
-    // * ### Add Tasks ###
-    function addTask() {
+    }, [data])
+    
+    // * ### Create Tasks ###
+    function createTask() {
         const newId = generateId(Math.pow(2, 8));
         const newTask = {
             id: newId,
@@ -35,7 +35,7 @@ export default function Popup(props) {
         }
         setTasks([newTask, ...tasks]);
 
-        updateTaskList(id.current, [newTask, ...tasks]);
+        updateTasks(id, [newTask, ...tasks]);
         console.log("C-T:", { id: newId });
     }
 
@@ -49,7 +49,7 @@ export default function Popup(props) {
         }
         setTasks([...tasksCopy]);
 
-        updateTaskList(id.current, [...tasksCopy]);
+        updateTasks(id, [...tasksCopy]);
         console.log("U-T:", { id: taskId })
     }
 
@@ -70,7 +70,7 @@ export default function Popup(props) {
         }
         setTasks([...tasksCopy]);
 
-        updateTaskList(id.current, [...tasksCopy]);
+        updateTasks(id, [...tasksCopy]);
         console.log("U-T:", { id: taskId });
     }
 
@@ -84,7 +84,7 @@ export default function Popup(props) {
         }
         setTasks([...tasksCopy]);
         
-        updateTaskList(id.current, [...tasksCopy]);
+        updateTasks(id, [...tasksCopy]);
         console.log("D-T:", { id: taskId });
     }
 
@@ -113,26 +113,26 @@ export default function Popup(props) {
                             <div className={styles.io}>
                                 <span>Tasks</span>
                                 <div className={styles.addWrapper}>
-                                    <button className={styles.add} type="button" onClick={addTask}>
+                                    <button className={styles.add} type="button" onClick={createTask}>
                                         <svg width={24} height={24}>
                                             <path d="M10.425 19.575v-6h-6v-3.15h6v-6h3.15v6h6v3.15h-6v6Z"/>
                                         </svg>
                                     </button>
                                 </div>
                             </div>
-                            <div className={styles.tasksWrapper}>
+                            {!isLoading ? <div className={styles.tasksWrapper}>
                                 {
                                     tasks.map((task) => <Task
                                         key={task.id}
                                         id={task.id}
                                         data={task.data}
                                         status={task.status}
-                                        handleUpdateTaskData={updateTaskData}
-                                        handleUpdateTaskStatus={updateTaskStatus}
-                                        handleDeleteTask={deleteTask}
+                                        updateTaskData={updateTaskData}
+                                        updateTaskStatus={updateTaskStatus}
+                                        deleteTask={deleteTask}
                                     />)
                                 }
-                            </div>
+                            </div> : <Loading color={props.node.color} />}
                         </div>
                     </div>
                 </div>
