@@ -22,7 +22,7 @@ export default function App(props) {
     const axonData = [];
     props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color }))
     props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
-
+    
     return (
         <div className="App">
             <Head>

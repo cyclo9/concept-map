@@ -9,13 +9,15 @@ export default function Task(props) {
         setStatus(props.status)
     }, [props.status])
 
+    // handles local state change
+    function updateInputValue(e) {
+        setTaskData(e.target.value);
+    }
+
     function updateStatus(e) {
         props.updateTaskStatus(props.id);
     }
     
-    function updateInputValue(e) {
-        setTaskData(e.target.value);
-    }
 
     // Task data will only be uploaded with the Enter key (keyCode = 13) is pressed
     function updateTaskData(e) {
@@ -33,7 +35,7 @@ export default function Task(props) {
                     <div style={{display: "flex", alignContent: "center"}}>
                         <input
                             type="checkbox"
-                            value={0}
+                            value={status}
                             checked={status == 1}
                             onChange={updateStatus}
                         />

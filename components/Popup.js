@@ -14,9 +14,7 @@ export default function Popup(props) {
     const color = useRef(null);
 
     // * ### Fetching data ###
-    const fetcher = (url) => fetch(url, {
-        method: "GET"
-    }).then(res => res.json())
+    const fetcher = (url) => fetch(url, { method: "GET" }).then(res => res.json())
     const { data, error, isLoading } = useSWR(`/api/tasks?id=${id}`, fetcher);
 
     // * ### useEffect ###

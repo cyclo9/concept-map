@@ -9,6 +9,12 @@ export default async function handler(req: any, res: any) {
         to: string
     }
 
+    // * ### Read ###
+    if (req.method === "GET") {
+        const axons = await collection.find().toArray();
+        res.status(200).json(axons);
+    }
+
     // * ### Create ###
     if (req.method === "POST") {
         const response: Response = req.body;

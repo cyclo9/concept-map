@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 
@@ -240,10 +240,8 @@ export default function Diagram(props) {
                 // Update new node's initial properties
                 const newNode = d.model.nodeDataArray.slice(-1)[0];
                 const newKey = generateId(Math.pow(2, 8))
-                const newLabel = "Node" + newNode.key.toString();
                 
                 d.model.set(newNode, "key", newKey);
-                d.model.set(newNode, "label", newLabel);
                 d.model.set(newNode, "color", "#ffffff");
                 d.model.set(newNode, "entries", []);
                 d.model.set(newNode, "tasks", []);
@@ -339,7 +337,6 @@ export default function Diagram(props) {
             // Delete
             if (removedLinkKeys != undefined) {
                 for (let i = 0; i < removedLinkKeys.length; i++) {
-                    console.log(removedLinkKeys);
                     const key = removedLinkKeys[i];
 
                     deleteAxon(key);

@@ -12,6 +12,12 @@ export default async function handler(req: any, res: any) {
         tasks: any[]
     }
 
+    // * ### Read ###
+    if (req.method === "GET") {
+        const nodes = await collection.find().toArray();
+        res.status(200).json(nodes);
+    }
+
     // * ### Create ###
     if (req.method === "POST") {
         const response: Response = req.body;
