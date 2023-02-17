@@ -1,25 +1,40 @@
-import React from "react";
-import Circle from "../components/circle"
-import Draggable from "react-draggable";
+import Head from "next/head";
 
-let data = [
-    { id: 1, x: 50, y: 50, radius: 15, color: "black" },
-    { id: 2, x: 100, y: 100, radius: 15, color: "black" }
-];
+import db from "../lib/mongo";
+import Diagram from "../components/Diagram";
 
-// Renders all nodes
-function NodeLayout() {
-    return (
-        <svg width="100vw" height="100vh">
-            {data.map((entry) => <Circle id={entry.id} x={entry.x} y={entry.y} radius={entry.radius} color={entry.color} />)}
-        </svg>
-    );
+// * ##### DATA FETCHING #####
+export async function getServerSideProps() {
+    const nodeResults = await db.collection("nodes").find().toArray();
+    const axonResults = await db.collection("axons").find().toArray();
+
+    return {
+        props: {
+            nodes: JSON.parse(JSON.stringify(nodeResults)),
+            axons: JSON.parse(JSON.stringify(axonResults))
+        }
+    }
 }
 
-export default function App() {
+export default function App(props) {
+    // * ##### Node & Axon #####
+    const nodeData = [];
+    const axonData = [];
+    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color }))
+    props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
+    
     return (
         <div className="App">
-            <NodeLayout />
+            <Head>
+                <title>Interactive Knowledge Graph</title>
+            </Head>
+
+            <div>
+                <Diagram
+                    nodeDataArray={nodeData}
+                    linkDataArray={axonData}
+                />
+            </div>
         </div>
     );
 }
