@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
         location: string,
         label: string,
         color: string,
-        entries: any[],
+        data: any[],
         tasks: any[]
     }
 
@@ -26,7 +26,12 @@ export default async function handler(req: any, res: any) {
             location: response.location,
             label: response.label,
             color: response.color,
-            entries: [],
+            data: [{
+                'type': 'span',
+                'children': [{
+                    'text': ''
+                }]
+            }],
             tasks: []
         })
         res.status(200).json(response);

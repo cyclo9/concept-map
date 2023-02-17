@@ -3,29 +3,29 @@ import db from "../../lib/mongo";
 export default async function handler(req: any, res: any) {
     interface Response {
         id: string,
-        tasks: string[]
+        data: string[]
     }
 
-    const collection = db.collection("nodes");
+    const collection = db.collection('nodes');
 
     // * ### Read ###
-    if (req.method === "GET") {
+    if (req.method === 'GET') {
         const response: Response = req.query;
         const node = await collection.find({ id: response.id }).toArray();
-        const tasks = node[0].tasks;
-        res.status(200).json(tasks);
+        const data = node[0].data;
+        res.status(200).json(data);
     }
 
     // * ### Update ###
-    if (req.method === "PUT") {
+    if (req.method === 'PUT') {
         const response: Response = req.body;
-        
+
         const filter = {
             id: response.id
         }
         const update = {
             $set: {
-                tasks: response.tasks
+                data: response.data
             }
         }
 

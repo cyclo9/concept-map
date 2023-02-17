@@ -243,7 +243,7 @@ export default function Diagram(props) {
                 
                 d.model.set(newNode, "key", newKey);
                 d.model.set(newNode, "color", "#ffffff");
-                d.model.set(newNode, "entries", []);
+                d.model.set(newNode, "data", []);
                 d.model.set(newNode, "tasks", []);
             })
         }
@@ -280,7 +280,7 @@ export default function Diagram(props) {
                     const color = modifiedNodeData[i].color; // splits each char of the color into an array
 
                     createNode(newKey, newLocation, newLabel, color);
-                    console.log("C-N:", [modifiedNodeData[i]]);
+                    console.log("+! N:", [modifiedNodeData[i]]);
                 }
             }
 
@@ -294,7 +294,7 @@ export default function Diagram(props) {
                         const color = modifiedNodeData[i].color;
                         
                         updateNode(key, location, label, color);
-                        console.log("U-N:", { label: label }, [modifiedNodeData[i]]);
+                        console.log("*! N:", { label: label }, [modifiedNodeData[i]]);
                     }
                 }
             }
@@ -305,7 +305,7 @@ export default function Diagram(props) {
                     const key = removedNodeKeys[i];
 
                     deleteNode(key);
-                    console.log("D-N:", { id: key });
+                    console.log("-! N:", { id: key });
                 }
             }
 
@@ -318,7 +318,7 @@ export default function Diagram(props) {
                     const to = modifiedLinkData[i].to;
 
                     createAxon(key, from, to)
-                    console.log("C-A:", { from: from, to: to });
+                    console.log("+! A:", { from: from, to: to });
                 }
             }
 
@@ -330,7 +330,7 @@ export default function Diagram(props) {
                     const to = modifiedLinkData[0].to;
 
                     updateAxon(key, from, to)
-                    console.log("U-A:", { id: key }, { from: from, to: to })
+                    console.log("+! A:", { id: key }, { from: from, to: to })
                 }
             }
 
@@ -340,7 +340,7 @@ export default function Diagram(props) {
                     const key = removedLinkKeys[i];
 
                     deleteAxon(key);
-                    console.log("D-A:", { id: key });
+                    console.log("-! A:", { id: key });
                 }
             }
         } else { initial.current = 1; }

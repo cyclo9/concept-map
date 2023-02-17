@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
-import useSWR from "swr";
 
 import styles from "../styles/popup.module.css"
+import Document from "./Document/Document.js";
 import Task from "./Task";
 import Loading from "./Loading";
 import { updateTasks } from "../lib/api";
@@ -13,15 +13,20 @@ export default function Popup(props) {
     const [tasks, setTasks] = useState([]);
     const color = useRef(null);
 
-    // * ### Fetching data ###
-    const fetcher = (url) => fetch(url, { method: "GET" }).then(res => res.json())
-    const { data, error, isLoading } = useSWR(`/api/tasks?id=${id}`, fetcher);
+    const [isLoading, setLoading] = useState(true)
 
-    // * ### useEffect ###
     useEffect(() => {
-        if (data != undefined) setTasks(data);
+        fetch(`/api/tasks?id=${id}`, {
+            method: 'GET',
+            cache: 'default',
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setTasks(data)
+                setLoading(false)
+            })
         color.current.style.backgroundColor = props.node.color;
-    }, [data])
+    }, [])
     
     // * ### Create Tasks ###
     function createTask() {
@@ -34,7 +39,7 @@ export default function Popup(props) {
         setTasks([newTask, ...tasks]);
 
         updateTasks(id, [newTask, ...tasks]);
-        console.log("C-T:", { id: newId });
+        console.log("+! T:", { id: newId });
     }
 
     // * ### Update Task Data ###
@@ -48,7 +53,7 @@ export default function Popup(props) {
         setTasks([...tasksCopy]);
 
         updateTasks(id, [...tasksCopy]);
-        console.log("U-T:", { id: taskId })
+        console.log("*! T:", { id: taskId })
     }
 
     // * ### Update Task Status ###
@@ -83,7 +88,7 @@ export default function Popup(props) {
         setTasks([...tasksCopy]);
         
         updateTasks(id, [...tasksCopy]);
-        console.log("D-T:", { id: taskId });
+        console.log("-! T:", { id: taskId });
     }
 
     return (
@@ -104,7 +109,13 @@ export default function Popup(props) {
                     <div className={styles.grid}>
                         {/* // * ### Entries ### */}
                         <div className={styles.ioWrapper} style={{borderRight: "2px solid black"}}>
-                            <span>Entries</span>
+                            <div className={styles.io}>
+                                <span>Entries</span>
+                            </div>
+                            <Document
+                                nodeId={id}
+                                color={props.node.color}
+                            />
                         </div>
                         {/* //* ### Tasks ### */}
                         <div className={styles.ioWrapper} style={{ borderLeft: "2px solid black" }}>
@@ -138,3 +149,4 @@ export default function Popup(props) {
         </>
     )
 }
+

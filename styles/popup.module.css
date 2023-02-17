@@ -63,7 +63,7 @@
 .ioWrapper {
     background-color: white;
     padding: 0 20px 0 20px;
-    overflow: auto;
+    overflow-y: auto;
 }
 
 .ioWrapper > span {
