@@ -12,7 +12,6 @@ import rehypeMathjax from 'rehype-mathjax'
 import isHotkey from 'is-hotkey'
 
 import styles from "./document.module.css"
-
 import { updateData } from '../../lib/api'
 import Loading from '../Loading'
 
