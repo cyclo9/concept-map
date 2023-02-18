@@ -19,6 +19,7 @@ export default function Diagram(props) {
                 }),
                 initialPosition: go.Point.parse("0 0"),
                 initialAutoScale: go.Diagram.None,
+                scrollMargin: 1000,
             });
 
         // * ### LINK TEMPLATE ###
@@ -243,8 +244,6 @@ export default function Diagram(props) {
                 
                 d.model.set(newNode, "key", newKey);
                 d.model.set(newNode, "color", "#ffffff");
-                d.model.set(newNode, "data", []);
-                d.model.set(newNode, "tasks", []);
             })
         }
 
