@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import styles from "../styles/task.module.css";
+import styles from "./taskitem.module.css";
 
-export default function Task(props) {
+export default function TaskItem(props) {
     const [status, setStatus] = useState(props.status);
     const [taskData, setTaskData] = useState(props.data);
 

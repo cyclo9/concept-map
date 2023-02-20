@@ -69,7 +69,7 @@ export function updateAxon(nodeId: string, from: string, to: string) {
     })
 }
 
-export function deleteAxon(nodeId: string, from: string, to: string) {
+export function deleteAxon(nodeId: string) {
     fetch('/api/axons', {
         method: 'DELETE',
         body: JSON.stringify({

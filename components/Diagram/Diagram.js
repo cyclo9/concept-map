@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 
-import styles from "../styles/diagram.module.css";
-import Popup from "./Popup";
-import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../lib/api"
-import { generateId } from "../lib/id";
+import styles from "./diagram.module.css";
+import Popup from "@/components/Popup/Popup.js";
+import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../../lib/api"
+import { generateId } from "../../lib/id";
 
 export default function Diagram(props) {
     // * ##### Diagram #####
@@ -28,8 +28,8 @@ export default function Diagram(props) {
                 {
                     relinkableFrom: true, relinkableTo: true
                 },
-                $(go.Shape, { isPanelMain: true, stroke: "transparent", strokeWidth: 25 }),
-                $(go.Shape, { isPanelMain: true, strokeWidth: 3 }),
+                $(go.Shape, { isPanelMain: true, stroke: "transparent",  strokeWidth: 25 }),
+                $(go.Shape, { isPanelMain: true, strokeWidth: 5 }),
             );
 
         //*  ### NODE TEMPLATE ###
@@ -257,7 +257,7 @@ export default function Diagram(props) {
     }
     
     // * ##### Event Handler #####
-    // model inserts nodes and links when the page first lods
+    // model inserts nodes and links when the page first loads
     const initial = useRef(0); 
     function handleModelChange(changes) {
         if (initial.current) {

@@ -1,0 +1,54 @@
+.superposition {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: hsla(0, 0%, 0%, 0.75);
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+.popup {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 48px auto;
+    position: relative;
+    background-color: white;
+    border: 5px solid black;
+    border-radius: 25px;
+    width: min(1440px, 80vw);
+    height: min(800px, 75vh);
+    padding: 50px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    padding: 0px;
+    background-color: transparent;
+    border: none;
+}
+
+.close > svg:hover {
+    fill: red;
+}
+
+.label {
+    margin: 0;
+    padding: 5px 0 5px 10px;
+    border-radius: 10px;
+    grid-column: 1 / span 2;
+}
+
+.documentWrapper {
+    padding: 15px;
+}
+
+.tasksWrapper {
+    padding: 15px;
+    height: 100%;
+    overflow-y: auto;
+}
