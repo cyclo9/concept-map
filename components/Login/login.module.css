@@ -1,0 +1,39 @@
+.body {
+    display: flex;
+    background-color: #333;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.centerbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login {
+    display: grid;
+    grid-template-rows: auto auto auto;
+}
+
+.text {
+    color: white;
+    margin: 5px;
+    text-align: center;
+    font-size: 16pt;
+}
+
+.input {
+    width: 150px;
+    height: 25px;
+    border-radius: 5px;
+}
+
+.insult {
+    color: red;
+    margin: 5px;
+    text-align: center;
+    font-size: 16pt;
+}

@@ -1,0 +1,30 @@
+.addWrapper {
+    display: flex;
+    justify-content: right;
+}
+
+.add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 4px;
+    margin: 0 10px 0 0;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.add:hover {
+    background-color: hsl(120, 75%, 75%);
+}
+
+.add:active {
+    background-color: hsl(120, 75%, 80%);
+}
+
+.tasksGrid {
+    display: grid;
+    padding: 10px;
+    row-gap: 10px;
+}

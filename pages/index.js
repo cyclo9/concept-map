@@ -1,25 +1,47 @@
-import React from "react";
-import Circle from "../components/circle"
-import Draggable from "react-draggable";
+import Head from "next/head";
+import { useState } from "react";
 
-let data = [
-    { id: 1, x: 50, y: 50, radius: 15, color: "black" },
-    { id: 2, x: 100, y: 100, radius: 15, color: "black" }
-];
+import Login from '@/components/Login/Login.js'
+import db from "@/lib/mongo";
+import Diagram from "@/components/Diagram/Diagram.js";
 
-// Renders all nodes
-function NodeLayout() {
-    return (
-        <svg width="100vw" height="100vh">
-            {data.map((entry) => <Circle id={entry.id} x={entry.x} y={entry.y} radius={entry.radius} color={entry.color} />)}
-        </svg>
-    );
+// * ##### DATA FETCHING #####
+export async function getServerSideProps() {
+    const nodes = await db.collection("nodes").find().toArray();
+    const axons = await db.collection("axons").find().toArray();
+    const _ = await db.collection('_').find().toArray();
+
+    return {
+        props: {
+            nodes: JSON.parse(JSON.stringify(nodes)),
+            axons: JSON.parse(JSON.stringify(axons)),
+            _: JSON.parse(JSON.stringify(_)),
+        }
+    }
 }
 
-export default function App() {
+export default function App(props) {
+    // * ##### Node & Axon #####
+    const nodeData = [];
+    const axonData = [];
+    const _ = props._[0]._
+    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color }))
+    props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
+
+    const [status, setStatus] = useState(false)
+    
     return (
         <div className="App">
-            <NodeLayout />
+            <Head>
+                <title>Interactive Knowledge Graph</title>
+            </Head>
+
+            {
+                status ? <Diagram
+                    nodeDataArray={nodeData}
+                    linkDataArray={axonData}
+                /> : <Login setStatus={setStatus} _={_} />
+            }
         </div>
     );
 }
