@@ -40,8 +40,8 @@ export default function Diagram(props) {
                     {
                         strokeWidth: 3,
                         fill: "#ffffff",
-                        width: 135,
-                        height: 90,
+                        width: 150,
+                        height: 100,
                         portId: "",
                         cursor: "pointer",
                         fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
@@ -58,7 +58,9 @@ export default function Diagram(props) {
                             textAlign: "center",
                             verticalAlignment: go.Spot.Center,
                             isMultiline: true,
-                            wrap: go.TextBlock.WrapFit
+                            wrap: go.TextBlock.WrapFit,
+                            maxLines: 2,
+                            overflow: go.TextBlock.OverflowEllipsis
                         },
                         new go.Binding("text", "label").makeTwoWay()
                     )
@@ -69,9 +71,9 @@ export default function Diagram(props) {
                             $("ContextMenuButton",
                                 $(go.TextBlock, "[Open]",
                                     {
-                                        margin: 5,
+                                        margin: 3,
                                         font: "bold 12pt Fira Code",
-                                        stroke: "black",
+                                        stroke: "#87cefa",
                                     }),
                                 { click: open }
                             ),
@@ -221,9 +223,10 @@ export default function Diagram(props) {
         diagram.contextMenu =
             $(go.Adornment, "Vertical",
                 $("ContextMenuButton",
-                    $(go.TextBlock, "[Create]",
+                    $(go.TextBlock, "[Create Node]",
                         {
                             margin: 5,
+                            stroke: '#8fef8f',
                             font: "bold 12pt Fira Code"
                         }),
                     { click: addNode })
