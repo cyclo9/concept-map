@@ -40,8 +40,8 @@ export default function Diagram(props) {
                     {
                         strokeWidth: 3,
                         fill: "#ffffff",
-                        width: 135,
-                        height: 90,
+                        width: 150,
+                        height: 100,
                         portId: "",
                         cursor: "pointer",
                         fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
@@ -58,7 +58,9 @@ export default function Diagram(props) {
                             textAlign: "center",
                             verticalAlignment: go.Spot.Center,
                             isMultiline: true,
-                            wrap: go.TextBlock.WrapFit
+                            wrap: go.TextBlock.WrapFit,
+                            maxLines: 2,
+                            overflow: go.TextBlock.OverflowEllipsis
                         },
                         new go.Binding("text", "label").makeTwoWay()
                     )
