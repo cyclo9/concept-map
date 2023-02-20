@@ -37,7 +37,7 @@ export default function App(props) {
             </Head>
 
             {
-                !status ? <Diagram
+                status ? <Diagram
                     nodeDataArray={nodeData}
                     linkDataArray={axonData}
                 /> : <Login setStatus={setStatus} _={_} />
