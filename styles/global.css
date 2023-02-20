@@ -1,15 +1,25 @@
 @font-face {
-    font-family: "Itim";
-    src: url("Itim/Itim-Regular.ttf");
+    font-family: 'Itim';
+    src: url('Itim/Itim-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('Fira_Sans/FiraSans-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    src: url('Fira_Code/FiraCode-Regular.ttf');
 }
 
 body {
     position: relative;
-    font-family: "Itim";
+    font-family: 'Itim';
 }
 
-h1, h2, h3, h4, h5, h6, ul {
-    margin: 0;
+h1, h2, h3, h4, h5, h6, ul, p {
+    margin: 10px 0 0 0;
 }
 
 ul {

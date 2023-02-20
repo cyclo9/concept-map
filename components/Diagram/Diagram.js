@@ -69,9 +69,9 @@ export default function Diagram(props) {
                             $("ContextMenuButton",
                                 $(go.TextBlock, "[Open]",
                                     {
-                                        margin: 5,
+                                        margin: 3,
                                         font: "bold 12pt Fira Code",
-                                        stroke: "black",
+                                        stroke: "#87cefa",
                                     }),
                                 { click: open }
                             ),
@@ -221,9 +221,10 @@ export default function Diagram(props) {
         diagram.contextMenu =
             $(go.Adornment, "Vertical",
                 $("ContextMenuButton",
-                    $(go.TextBlock, "[Create]",
+                    $(go.TextBlock, "[Create Node]",
                         {
                             margin: 5,
+                            stroke: '#8fef8f',
                             font: "bold 12pt Fira Code"
                         }),
                     { click: addNode })
