@@ -4,7 +4,18 @@ import { ReactDiagram } from "gojs-react";
 
 import styles from "./diagram.module.css";
 import Popup from "@/components/Popup/Popup.js";
-import { createNode, updateNode, deleteNode, createAxon, updateAxon, deleteAxon } from "../../lib/api"
+import {
+    createNode,
+    updateNode,
+    deleteNode,
+    createAxon,
+    updateAxon,
+    deleteAxon,
+    createDataList,
+    createTaskList,
+    deleteDataList,
+    deleteTaskList
+} from "../../lib/api"
 import { generateId } from "../../lib/id";
 
 export default function Diagram(props) {
@@ -19,7 +30,7 @@ export default function Diagram(props) {
                 }),
                 initialPosition: go.Point.parse("0 0"),
                 initialAutoScale: go.Diagram.None,
-                scrollMargin: 1000,
+                scrollMode: go.Diagram.InfiniteScroll
             });
 
         // * ### LINK TEMPLATE ###
@@ -282,6 +293,8 @@ export default function Diagram(props) {
                     const color = modifiedNodeData[i].color; // splits each char of the color into an array
 
                     createNode(newKey, newLocation, newLabel, color);
+                    createDataList(newKey)
+                    createTaskList(newKey)
                     console.log("+! N:", [modifiedNodeData[i]]);
                 }
             }
@@ -307,6 +320,8 @@ export default function Diagram(props) {
                     const key = removedNodeKeys[i];
 
                     deleteNode(key);
+                    deleteDataList(key)
+                    deleteTaskList(key)
                     console.log("-! N:", { id: key });
                 }
             }

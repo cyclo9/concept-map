@@ -12,6 +12,7 @@ export default async function handler(req: any, res: any) {
     // * ### Read ###
     if (req.method === "GET") {
         const axons = await collection.find().toArray();
+
         res.status(200).json(axons);
     }
 
@@ -23,6 +24,7 @@ export default async function handler(req: any, res: any) {
             from: response.from,
             to: response.to
         })
+
         res.status(200).json(response);
     }
 
@@ -38,6 +40,7 @@ export default async function handler(req: any, res: any) {
                 to: response.to
             }
         }
+
         await collection.updateOne(filter, update);
         res.status(200).json(response);
     }
@@ -48,6 +51,7 @@ export default async function handler(req: any, res: any) {
         await collection.deleteOne({
             id: response.id
         })
+        
         res.status(200).json(response);
     }
 }

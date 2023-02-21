@@ -81,7 +81,57 @@ export function deleteAxon(nodeId: string) {
     })
 }
 
-// * ##### POPUP #####
+// * ##### DATA #####
+export function createDataList(nodeId: string) {
+    fetch('/api/data', {
+        method: 'POST',
+        body: JSON.stringify({
+            id: nodeId
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function updateData(nodeId: string, data: string[]) {
+    fetch('api/data', {
+        method: 'PUT',
+        body: JSON.stringify({
+            id: nodeId,
+            data: data
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+}
+
+export function deleteDataList(nodeId: string) {
+    fetch('/api/data', {
+        method: 'DELETE',
+        body: JSON.stringify({
+            id: nodeId
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+// * ##### TASKS #####
+export function createTaskList(nodeId: string) {
+    fetch('/api/tasks', {
+        method: 'POST',
+        body: JSON.stringify({
+            id: nodeId
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
 export function updateTasks(nodeId: string, tasks: string[]) {
     fetch('api/tasks', {
         method: 'PUT',
@@ -95,16 +145,14 @@ export function updateTasks(nodeId: string, tasks: string[]) {
     });
 }
 
-// * ##### DATA #####
-export function updateData(nodeId: string, data: string[]) {
-    fetch('api/data', {
-        method: 'PUT',
+export function deleteTaskList(nodeId: string) {
+    fetch('/api/tasks', {
+        method: 'DELETE',
         body: JSON.stringify({
-            id: nodeId,
-            data: data
+            id: nodeId
         }),
         headers: {
             'Content-Type': 'application/json'
-        },
+        }
     })
 }
