@@ -15,6 +15,7 @@ export default async function handler(req: any, res: any) {
     // * ### Read ###
     if (req.method === "GET") {
         const nodes = await collection.find().toArray();
+
         res.status(200).json(nodes);
     }
 
@@ -25,15 +26,9 @@ export default async function handler(req: any, res: any) {
             id: response.id,
             location: response.location,
             label: response.label,
-            color: response.color,
-            data: [{
-                'type': 'span',
-                'children': [{
-                    'text': ''
-                }]
-            }],
-            tasks: []
+            color: response.color
         })
+
         res.status(200).json(response);
     }
 
@@ -50,6 +45,7 @@ export default async function handler(req: any, res: any) {
                 color: response.color
             }
         }
+
         await collection.updateOne(filter, update);
         res.status(200).json(response);
     }
@@ -60,6 +56,7 @@ export default async function handler(req: any, res: any) {
         await collection.deleteOne({
             id: response.id
         })
+
         res.status(200).json(response);
     }
 }

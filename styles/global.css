@@ -13,9 +13,15 @@
     src: url('Fira_Code/FiraCode-Regular.ttf');
 }
 
+@font-face {
+    font-family: 'Monaco';
+    src: url('Monaco/Monaco.ttf');
+}
+
 body {
     position: relative;
     font-family: 'Itim';
+    overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, h6, ul, p {
@@ -26,13 +32,17 @@ ul {
     padding-left: 20px;
 }
 
+li {
+    margin: 5px 0 5px 0;
+}
+
 code {
-    font-family: Monaco;
+    font-family: 'Monaco';
     font-size: 90%;
-    color: #e8912d;
-    background-color: black;
+    color: black;
+    background-color: #EEE;
     border-radius: 5px;
-    padding: 2px 4px 2px 4px;
+    padding: 4px 2px 2px 2px;
 }
 
 pre {
