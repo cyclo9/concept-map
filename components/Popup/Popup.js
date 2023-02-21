@@ -24,13 +24,14 @@ export default function Popup(props) {
 
                 <Label children={label} ref={color} />
 
+                <h2 style={{textAlign: 'center'}}>Data</h2>
+                <h2 style={{ textAlign: 'center' }}>Tasks</h2>
+
                 <DocumentWrapper>
-                    <h2 style={{textAlign: 'center'}}>Data</h2>
                     <Document nodeId={id} color={props.node.color} />
                 </DocumentWrapper>
 
                 <TasksWrapper>
-                    <h2 style={{ textAlign: 'center' }}>Tasks</h2>
                     <Tasklist nodeId={id} color={props.node.color} />
                 </TasksWrapper>
             </Layout>
