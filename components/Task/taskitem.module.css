@@ -17,6 +17,10 @@
     border: none;
 }
 
+.taskName:focus {
+    outline: none;
+}
+
 .deleteWrapper {
     display: flex;
     justify-content: center;
