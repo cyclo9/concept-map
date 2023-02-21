@@ -1,27 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./taskitem.module.css";
 
 export default function TaskItem(props) {
     const [status, setStatus] = useState(props.status);
     const [taskData, setTaskData] = useState(props.data);
 
+    const [isSaved, setSaved] = useState(true);
+    const boxRef = useRef(null)
+
     useEffect(() => {
         setStatus(props.status)
     }, [props.status])
 
+    useEffect(() => {
+        if (isSaved) boxRef.current.style.borderColor = 'black'
+        if (!isSaved) boxRef.current.style.borderColor = 'red'
+    }, [isSaved])
+
     // handles local state change
     function updateInputValue(e) {
+        setSaved(false)
         setTaskData(e.target.value);
     }
 
     function updateStatus(e) {
-        props.updateTaskStatus(props.id);
+        props.updateTaskStatus(props.id)
     }
     
 
     // Task data will only be uploaded with the Enter key (keyCode = 13) is pressed
     function updateTaskData(e) {
-        e.keyCode === 13 && props.updateTaskData(props.id, taskData);
+        e.keyCode === 13 && props.updateTaskData(props.id, taskData)
+        setSaved(true)
     }
 
     function deleteTask(e) {
@@ -31,7 +41,7 @@ export default function TaskItem(props) {
     return (
         <>
             <div className={styles.task}>
-                <div className={styles.box}>
+                <div ref={boxRef} className={styles.box}>
                     <div style={{display: "flex", alignContent: "center"}}>
                         <input
                             type="checkbox"
