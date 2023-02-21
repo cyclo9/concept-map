@@ -51,7 +51,7 @@ const Document = ({ nodeId, color }) => {
                             value={data}
                             setData={setData}
                         />
-                        : <div>
+                        : <div className={styles.editor}>
                             <Loading color={color} />
                         </div>
                 }
@@ -70,7 +70,7 @@ const Editor = ({ nodeId, value, setData }) => {
 
     useEffect(() => {
         if (isSaved) savedRef.current.style.borderColor = 'black'
-        if (!isSaved) savedRef.current.style.borderColor = 'red'
+        if (!isSaved) savedRef.current.style.borderColor = '#00bfff '
     })
 
     return (
@@ -136,15 +136,6 @@ const Preview = ({ value }) => {
                 ]}
             />
         </>
-    )
-}
-
-// * ##### EDITOR LAYOUT #####
-const EditorWrapper = ({ children }) => {
-    return (
-        <div className={styles.editor}>
-            {children}
-        </div>
     )
 }
 
