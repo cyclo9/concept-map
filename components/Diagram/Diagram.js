@@ -30,7 +30,7 @@ export default function Diagram(props) {
                 }),
                 initialPosition: go.Point.parse("0 0"),
                 initialAutoScale: go.Diagram.None,
-                scrollMargin: 1000,
+                scrollMode: go.Diagram.InfiniteScroll
             });
 
         // * ### LINK TEMPLATE ###
