@@ -14,7 +14,7 @@ export default function TaskItem(props) {
 
     useEffect(() => {
         if (isSaved) boxRef.current.style.borderColor = 'black'
-        if (!isSaved) boxRef.current.style.borderColor = 'red'
+        if (!isSaved) boxRef.current.style.borderColor = '#87cefa'
     }, [isSaved])
 
     // handles local state change
