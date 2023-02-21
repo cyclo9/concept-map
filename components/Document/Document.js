@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef, forwardRef } from 'react'
 import { createEditor } from 'slate'
 import { Editable, withReact, Slate } from 'slate-react'
 import { withHistory } from 'slate-history'
@@ -44,17 +44,17 @@ const Document = ({ nodeId, color }) => {
                             : <Loading color={color} />
                     }
                 </PreviewWrapper>
-                <EditorWrapper>
-                    {
-                        !isLoading ?
-                            <Editor
-                                nodeId={nodeId}
-                                value={data}
-                                setData={setData}
-                            />
-                        : <Loading color={color} />
-                    }
-                </EditorWrapper>
+                {
+                    !isLoading ?
+                        <Editor
+                            nodeId={nodeId}
+                            value={data}
+                            setData={setData}
+                        />
+                        : <div>
+                            <Loading color={color} />
+                        </div>
+                }
             </div>
         </>
     )
@@ -65,38 +65,51 @@ export default Document
 const Editor = ({ nodeId, value, setData }) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
 
+    const [isSaved, setSaved] = useState(true);
+    const savedRef = useRef(null)
+
+    useEffect(() => {
+        if (isSaved) savedRef.current.style.borderColor = 'black'
+        if (!isSaved) savedRef.current.style.borderColor = 'red'
+    })
+
     return (
         <>
-            <Slate
-                editor={editor}
-                value={value}
-                onChange={newValue => setData(newValue)}
-            >
-            <Editable
-                editor={editor}
-                // onChange={editor.onChange}
-                onKeyDown={e => {
-                    switch (e.key) {
-                        case 'Enter':
-                            e.preventDefault()
-                            editor.insertText('\n'.toString())
-                            break
-                        case 'Tab':
-                            e.preventDefault()
-                            editor.insertText('  '.toString())
-                            break
-                        case '\\':
-                            e.preventDefault()
-                            editor.insertText('\\'.toString())
-                    }
+            <div ref={savedRef} className={styles.editor}>
+                <Slate
+                    editor={editor}
+                    value={value}
+                    onChange={newValue => {
+                        if (value != newValue) setSaved(false)
+                        setData(newValue)
+                    }}
+                >
+                <Editable
+                    editor={editor}
+                    onKeyDown={e => {
+                        switch (e.key) {
+                            case 'Enter':
+                                e.preventDefault()
+                                editor.insertText('\n'.toString())
+                                break
+                            case 'Tab':
+                                e.preventDefault()
+                                editor.insertText('  '.toString())
+                                break
+                            case '\\':
+                                e.preventDefault()
+                                editor.insertText('\\'.toString())
+                        }
 
-                    if (isHotkey('mod+s', e)) {
-                        e.preventDefault()
-                        updateData(nodeId, value)
-                    }
-                }}
-            />
-            </Slate>
+                        if (isHotkey('mod+s', e)) {
+                            e.preventDefault()
+                            updateData(nodeId, value)
+                            setSaved(true)
+                        }
+                    }}
+                />
+                </Slate>
+            </div>
         </>
     )
 }
