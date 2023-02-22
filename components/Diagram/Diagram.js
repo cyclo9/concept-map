@@ -69,7 +69,7 @@ export default function Diagram(props) {
                 $(go.Panel, "Auto",
                     $(go.TextBlock,
                         {
-                            font: "14pt Itim",
+                            font: "12pt Fira Sans",
                             editable: true,
                             textAlign: "center",
                             verticalAlignment: go.Spot.Center,
