@@ -37,22 +37,28 @@ export default function Diagram(props) {
         diagram.linkTemplate =
             $(go.Link,
                 {
-                    relinkableFrom: true, relinkableTo: true
+                    relinkableFrom: true, relinkableTo: true,
+                    toShortLength: 2,
+                    zOrder: -1,
                 },
                 $(go.Shape, { isPanelMain: true, stroke: "transparent",  strokeWidth: 25 }),
-                $(go.Shape, { isPanelMain: true, strokeWidth: 5 }),
+                $(go.Shape, { isPanelMain: true, strokeWidth: 3 }),
+                $(go.Shape, { toArrow: 'Standard', scale: 1})
             );
 
         //*  ### NODE TEMPLATE ###
         diagram.nodeTemplate =
             $(go.Node, "Auto",
+                {
+                    zOrder: 1
+                },
                 new go.Binding("location", "location", go.Point.parse).makeTwoWay(go.Point.stringify),
                 $(go.Shape, "Ellipse",
                     {
                         strokeWidth: 3,
+                        width: 180,
+                        height: 120,
                         fill: "#ffffff",
-                        width: 150,
-                        height: 100,
                         portId: "",
                         cursor: "pointer",
                         fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
@@ -60,21 +66,27 @@ export default function Diagram(props) {
                     },
                     new go.Binding("fill", "color")
                 ),
-                $(go.Panel, "Vertical",
+                $(go.Panel, "Auto",
                     $(go.TextBlock,
                         {
                             font: "14pt Itim",
-                            width: 90,
                             editable: true,
                             textAlign: "center",
                             verticalAlignment: go.Spot.Center,
                             isMultiline: true,
                             wrap: go.TextBlock.WrapFit,
-                            maxLines: 2,
                             overflow: go.TextBlock.OverflowEllipsis
                         },
                         new go.Binding("text", "label").makeTwoWay()
-                    )
+                    ),
+                    $(go.Shape, 'Ellipse',
+                        {
+                            fill: null,
+                            stroke: null,
+                            strokeWidth: 2,
+                            width: 110,
+                            height: 63.5,
+                        }),
                 ),
                 {
                     contextMenu:
