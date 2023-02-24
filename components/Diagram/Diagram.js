@@ -40,6 +40,7 @@ export default function Diagram(props) {
                     relinkableFrom: true, relinkableTo: true,
                     toShortLength: 2,
                     zOrder: -1,
+                    cursor: 'pointer'
                 },
                 $(go.Shape, { isPanelMain: true, stroke: "transparent",  strokeWidth: 25 }),
                 $(go.Shape, { isPanelMain: true, strokeWidth: 3 }),
@@ -276,6 +277,38 @@ export default function Diagram(props) {
             const newLink = e.diagram.model.linkDataArray.slice(-1)[0]
             e.diagram.model.set(newLink, "key", generateId(Math.pow(2, 8)))
         })
+
+        // * ##### CUSTOM COMMANDS #####
+        diagram.commandHandler.doKeyDown = function () {
+            const e = diagram.lastInput;
+            switch (e.key) {
+                case 'E':
+                    if (this.canIncreaseZoom()) {
+                        this.increaseZoom()
+                    }
+                    break
+                
+                case 'Q':
+                    if (this.canDecreaseZoom()) {
+                        this.decreaseZoom()
+                    }
+                    break
+
+                case 'W':
+                    if (this.canResetZoom()) {
+                        this.resetZoom()
+                    }
+                    break
+                    
+                case 'D':
+                    if (this.canDeleteSelection()) {
+                        this.deleteSelection()
+                    }
+                    break
+                default:
+                    go.CommandHandler.prototype.doKeyDown.call(this)
+            }
+        }
         
         return diagram;
     }

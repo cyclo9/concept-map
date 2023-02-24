@@ -6,7 +6,12 @@ import db from "@/lib/mongo";
 import Diagram from "@/components/Diagram/Diagram.js";
 
 // * ##### DATA FETCHING #####
-export async function getServerSideProps() {
+export async function getServerSideProps({ req, res }) {
+    res.setHeader(
+        'Cache-Control',
+        'public, s-maxage10, stale-while-revalidate=59'
+    )
+
     const nodes = await db.collection("nodes").find().toArray();
     const axons = await db.collection("axons").find().toArray();
     const _ = await db.collection('_').find().toArray();
