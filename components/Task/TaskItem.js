@@ -6,15 +6,15 @@ export default function TaskItem(props) {
     const [taskData, setTaskData] = useState(props.data);
 
     const [isSaved, setSaved] = useState(true);
-    const boxRef = useRef(null)
+    const taskRef = useRef(null)
 
     useEffect(() => {
         setStatus(props.status)
     }, [props.status])
 
     useEffect(() => {
-        if (isSaved) boxRef.current.style.borderColor = 'black'
-        if (!isSaved) boxRef.current.style.borderColor = '#00bfff'
+        if (isSaved) taskRef.current.style.borderColor = 'black'
+        if (!isSaved) taskRef.current.style.borderColor = '#00bfff'
     }, [isSaved])
 
     // handles local state change
@@ -41,7 +41,7 @@ export default function TaskItem(props) {
     return (
         <>
             <div className={styles.task}>
-                <div ref={boxRef} className={styles.box}>
+                <div ref={taskRef} className={styles.box}>
                     <div style={{display: "flex", alignContent: "center"}}>
                         <input
                             type="checkbox"
