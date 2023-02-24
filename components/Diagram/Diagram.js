@@ -284,23 +284,39 @@ export default function Diagram(props) {
             switch (e.key) {
                 case 'E':
                     if (this.canIncreaseZoom()) {
-                        this.increaseZoom()
+                        this.increaseZoom(1.2)
                     }
                     break
                 
                 case 'Q':
                     if (this.canDecreaseZoom()) {
-                        this.decreaseZoom()
+                        this.decreaseZoom(0.8)
                     }
                     break
-
+                
                 case 'W':
+                    diagram.scroll('pixel', 'up', 30)
+                    break
+                
+                case 'A':
+                    diagram.scroll('pixel', 'left', 30)
+                    break
+                
+                case 'S':
+                    diagram.scroll('pixel', 'down', 30)
+                    break
+                
+                case 'D':
+                    diagram.scroll('pixel', 'right', 30)
+                    break
+
+                case 'Z':
                     if (this.canResetZoom()) {
-                        this.resetZoom()
+                        this.resetZoom(0.75)
                     }
                     break
                     
-                case 'D':
+                case 'X':
                     if (this.canDeleteSelection()) {
                         this.deleteSelection()
                     }
