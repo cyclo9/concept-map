@@ -47,7 +47,7 @@ const Document = ({ nodeId, color }) => {
     // Sync editor and preview scrollbars
     const [scroller, setScroller] = useState(null)
     const scrollPreview = (e) => { if (scroller != 'PREVIEW') previewRef.current.scrollTop = e.target.scrollTop } 
-    const scrollEditor = (e) => { if (scroller != 'EDITOR') editorRef.current.scrollTop = e.target.scrollTop - 10 }
+    const scrollEditor = (e) => { if (scroller != 'EDITOR') editorRef.current.scrollTop = e.target.scrollTop }
 
     return (
         <>
