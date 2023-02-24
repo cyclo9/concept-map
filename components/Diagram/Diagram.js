@@ -29,7 +29,7 @@ export default function Diagram(props) {
                     linkKeyProperty: "key"
                 }),
                 initialPosition: go.Point.parse("0 0"),
-                initialAutoScale: go.Diagram.None,
+                initialScale: 0.75,
                 scrollMode: go.Diagram.InfiniteScroll
             });
 
