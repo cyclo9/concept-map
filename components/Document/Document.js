@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, forwardRef } from 'react'
 import { createEditor } from 'slate'
 import { Editable, withReact, Slate } from 'slate-react'
 import { withHistory } from 'slate-history'
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync'
 // Remark
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -41,49 +42,78 @@ const Document = ({ nodeId, color }) => {
     const [isSaved, setSaved] = useState(true)
     useEffect(() => {
         if (isSaved) editorRef.current.style.borderColor = 'black'
-        if (!isSaved) editorRef.current.style.borderColor = '#00bfff '
+        if (!isSaved) editorRef.current.style.borderColor = '#00bfff'
     }, [isSaved])
 
     // Sync editor and preview scrollbars
     const [scroller, setScroller] = useState(null)
-    const scrollPreview = (e) => { if (scroller != 'PREVIEW') previewRef.current.scrollTop = e.target.scrollTop } 
-    const scrollEditor = (e) => { if (scroller != 'EDITOR') editorRef.current.scrollTop = e.target.scrollTop }
+
+    function calcScrollMaxTop(scrollHeight, clientHeight) {
+        // * scrollMaxTop = scrollHeight - clientHeight
+        return scrollHeight - clientHeight
+    }
+
+    function calcScaledScrollTop(scrollTop, scrollMaxTopA, scrollMaxTopB) {
+        // * editorScrollTop / editorScrollTopMax * previewScrollTopMax
+        return scrollTop / scrollMaxTopA * scrollMaxTopB
+    }
+
+    function scrollPreview(e) {
+        if (scroller != 'PREVIEW') {
+            const editorScrollTop = e.target.scrollTop
+            const editorScrollTopMax = calcScrollMaxTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
+            const previewScrollTopMax = calcScrollMaxTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
+
+            const previewScrollTop = calcScaledScrollTop(editorScrollTop, editorScrollTopMax, previewScrollTopMax)
+            previewRef.current.scrollTop = previewScrollTop
+        }
+    } 
+    
+    function scrollEditor(e) {
+        if (scroller != 'EDITOR') {
+            const previewScrollTop = e.target.scrollTop
+            const editorScrollTopMax = calcScrollMaxTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
+            const previewScrollTopMax = calcScrollMaxTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
+
+            const editorScrollTop = calcScaledScrollTop(previewScrollTop, previewScrollTopMax, editorScrollTopMax)
+            editorRef.current.scrollTop = editorScrollTop
+        }
+    }
 
     return (
         <>
             <div className={styles.document}>
-                {/* //* ##### PREVIEW ##### */}
-                <PreviewWrapper
-                    ref={previewRef}
-                    scrollEditor={scrollEditor}
-                    setScroller={setScroller}
-                >
-                    {
-                        !isLoading ?
-                            <Preview
-                                value={data}
-                            />
-                            : <Loading color={color} />
-                    }
-                </PreviewWrapper>
-                
-                {/* //* ##### EDITOR ##### */}
-                <EditorWrapper
-                    ref={editorRef}
-                    scrollPreview={scrollPreview}
-                    setScroller={setScroller}
-                >
-                    {
-                        !isLoading ?
-                            <Editor
-                                nodeId={nodeId}
-                                value={data}
-                                setData={setData}
-                                setSaved={setSaved}
-                            />
-                            : <Loading color={color} />
-                    }
-                </EditorWrapper>
+                    {/* //* ##### EDITOR ##### */}
+                    <EditorWrapper
+                        ref={editorRef}
+                        scrollPreview={scrollPreview}
+                        setScroller={setScroller}
+                    >
+                        {
+                            !isLoading ?
+                                <Editor
+                                    nodeId={nodeId}
+                                    value={data}
+                                    setData={setData}
+                                    setSaved={setSaved}
+                                />
+                                : <Loading color={color} />
+                        }
+                    </EditorWrapper>
+                    {/* //* ##### PREVIEW ##### */}
+                    <PreviewWrapper
+                        ref={previewRef}
+                        scrollEditor={scrollEditor}
+                        setScroller={setScroller}
+                    >
+                        {
+                            !isLoading ?
+                                <Preview
+                                    value={data}
+                                />
+                                : <Loading color={color} />
+                        }
+                    </PreviewWrapper>
             </div>
         </>
     )
