@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef, forwardRef } from 'react'
 import { createEditor } from 'slate'
 import { Editable, withReact, Slate } from 'slate-react'
 import { withHistory } from 'slate-history'
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync'
 // Remark
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
