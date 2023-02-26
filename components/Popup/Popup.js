@@ -10,11 +10,26 @@ export default function Popup({ node, handlePopup }) {
     const color = node.color
     const colorRef = useRef(null);
 
+    const [tab, setTab] = useState('DATA')
+    const data = useRef(null)
+    const tasks = useRef(null)
+
     useEffect(() => {
         colorRef.current.style.backgroundColor = color;
     })
 
-    const [tab, setTab] = useState('DATA')
+    useEffect(() => {
+        switch (tab) {
+            case 'DATA':
+                data.current.style.display = 'block'
+                tasks.current.style.display = 'none'
+                break
+            case 'TASKS':
+                data.current.style.display = 'none'
+                tasks.current.style.display = 'block'
+                break
+        }
+    }, [tab])
 
     return (
         <>
@@ -33,19 +48,13 @@ export default function Popup({ node, handlePopup }) {
                     color={color}
                 />
 
-                {
-                    tab == 'DATA' &&
-                        <DocumentWrapper>
-                            <Document nodeId={id} color={color} />
-                        </DocumentWrapper>
-                }
+                <DocumentWrapper ref={data}>
+                    <Document nodeId={id} color={color} />
+                </DocumentWrapper>
 
-                {
-                    tab == 'TASKS' &&
-                        <TasksWrapper>
-                            <Tasklist nodeId={id} color={color} />
-                        </TasksWrapper>
-                }
+                <TasksWrapper ref={tasks}>
+                    <Tasklist nodeId={id} color={color} />
+                </TasksWrapper>
             </Layout>
         </>
     )
@@ -111,23 +120,23 @@ const TabList = ({ tab, setTab, color }) => {
 }
 
 // * ##### DOCUMENT LAYOUT  #####
-const DocumentWrapper = ({ children }) => {
+const DocumentWrapper = forwardRef(({ children }, ref) => {
     return (
         <>
-            <div className={styles.documentWrapper}>
+            <div ref={ref} className={styles.documentWrapper}>
                 {children}
             </div>
         </>
     )
-}
+})
 
 // * ##### TASK LAYOUT #####
-const TasksWrapper = ({ children }) => {
+const TasksWrapper = forwardRef(({ children }, ref) => {
     return (
         <>
-            <div className={styles.tasksWrapper}>
+            <div ref={ref} className={styles.tasksWrapper}>
                 {children}
             </div>
         </>
     )
-}
+})
