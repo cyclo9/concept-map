@@ -24,16 +24,18 @@ const Tasklist = ({ nodeId, color }) => {
     
     // * ### Create Tasks ###
     function createTask() {
-        const newId = generateId(Math.pow(2, 8));
-        const newTask = {
-            id: newId,
-            data: "",
-            status: 0
-        }
-        setTasks([newTask, ...tasks]);
+        if (!isLoading) {
+            const newId = generateId(Math.pow(2, 8));
+            const newTask = {
+                id: newId,
+                data: "",
+                status: 0
+            }
+            setTasks([newTask, ...tasks]);
 
-        updateTasks(nodeId, [newTask, ...tasks]);
-        console.log("+! T:", { id: newId });
+            updateTasks(nodeId, [newTask, ...tasks]);
+            console.log("+! T:", { id: newId });
+        }
     }
 
     // * ### Update Task Data ###

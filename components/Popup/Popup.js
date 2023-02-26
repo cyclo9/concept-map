@@ -1,39 +1,51 @@
-import { useEffect, useRef, forwardRef } from "react"
+import { useState, useEffect, useRef, forwardRef } from "react"
 
 import styles from "./popup.module.css"
 import Document from "@/components/Document/Document.js";
 import Tasklist from "@/components/Task/Tasklist.js";
 
-export default function Popup(props) {
-    const id = props.node.key;
-    const label = props.node.label;
-    const color = useRef(null);
+export default function Popup({ node, handlePopup }) {
+    const id = node.key;
+    const label = node.label;
+    const color = node.color
+    const colorRef = useRef(null);
 
     useEffect(() => {
-        color.current.style.backgroundColor = props.node.color;
+        colorRef.current.style.backgroundColor = color;
     })
+
+    const [tab, setTab] = useState('DATA')
 
     return (
         <>
             <Layout>
-                <button className={styles.close} type="button" onClick={props.handlePopup}>
+                <button className={styles.close} type="button" onClick={handlePopup}>
                     <svg width={40} height={40}>
                         <path d="m10.458 32.625-3.083-3.083L16.917 20l-9.542-9.542 3.083-3.083 9.542 9.5 9.542-9.5 3.083 3.083L23.083 20l9.542 9.542-3.083 3.083L20 23.083Z"/>
                     </svg>
                 </button>
 
-                <Label children={label} ref={color} />
+                <Label children={label} ref={colorRef} />
 
-                <h2 style={{textAlign: 'center'}}>Data</h2>
-                <h2 style={{ textAlign: 'center' }}>Tasks</h2>
+                <TabList
+                    tab={tab}
+                    setTab={setTab}
+                    color={color}
+                />
 
-                <DocumentWrapper>
-                    <Document nodeId={id} color={props.node.color} />
-                </DocumentWrapper>
+                {
+                    tab == 'DATA' &&
+                        <DocumentWrapper>
+                            <Document nodeId={id} color={color} />
+                        </DocumentWrapper>
+                }
 
-                <TasksWrapper>
-                    <Tasklist nodeId={id} color={props.node.color} />
-                </TasksWrapper>
+                {
+                    tab == 'TASKS' &&
+                        <TasksWrapper>
+                            <Tasklist nodeId={id} color={color} />
+                        </TasksWrapper>
+                }
             </Layout>
         </>
     )
@@ -56,6 +68,47 @@ const Layout = ({ children } ) => {
 const Label = forwardRef(({ children }, ref) => {
     return <h1 ref={ref} className={styles.label}>{children}</h1>
 })
+
+// * ##### TAB LIST #####
+const TabList = ({ tab, setTab, color }) => {
+    const data = useRef(null)
+    const tasks = useRef(null)
+
+    useEffect(() => {
+        switch (tab) {
+            case 'DATA':
+                data.current.style.backgroundColor = color != '#ffffff' ? color : 'lightgray'
+                tasks.current.style.backgroundColor = 'white'
+                break
+            
+            case 'TASKS':
+                data.current.style.backgroundColor = 'white'
+                tasks.current.style.backgroundColor = color != '#ffffff' ? color : 'lightgray'
+                break
+        }
+    }, [tab])
+    
+    function switchToData() {
+        if (tab != 'DATA') setTab('DATA')
+    }
+
+    function switchToTasks() {
+        if (tab != 'TASKS') setTab('TASKS')
+    }
+
+    return (
+        <>
+            <div className={styles.tablist}>
+                <div ref={data} className={styles.tabs} onClick={switchToData}>
+                    <h2>Data</h2>
+                </div>
+                <div ref={tasks} className={styles.tabs} onClick={switchToTasks}>
+                    <h2>Tasks</h2>
+                </div>
+            </div>
+        </>
+    )
+}
 
 // * ##### DOCUMENT LAYOUT  #####
 const DocumentWrapper = ({ children }) => {

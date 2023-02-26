@@ -73,7 +73,7 @@ pre code {
 table, th, td {
     padding: 5px;
     border-collapse: collapse;
-    border: 1px solid;
+    border: 2px solid;
 }
 
 th {

@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
+import isHotkey from "is-hotkey";
 
 import styles from "./diagram.module.css";
 import Popup from "@/components/Popup/Popup.js";
@@ -283,15 +284,11 @@ export default function Diagram(props) {
             const e = diagram.lastInput;
             switch (e.key) {
                 case 'E':
-                    if (this.canIncreaseZoom()) {
-                        this.increaseZoom(1.2)
-                    }
+                    if (this.canIncreaseZoom()) this.increaseZoom(1.2)
                     break
                 
                 case 'Q':
-                    if (this.canDecreaseZoom()) {
-                        this.decreaseZoom(0.8)
-                    }
+                    if (this.canDecreaseZoom()) this.decreaseZoom(0.8)
                     break
                 
                 case 'W':
@@ -309,18 +306,15 @@ export default function Diagram(props) {
                 case 'D':
                     diagram.scroll('pixel', 'right', 30)
                     break
-
-                case 'Z':
-                    if (this.canResetZoom()) {
-                        this.resetZoom(0.75)
-                    }
-                    break
                     
                 case 'X':
-                    if (this.canDeleteSelection()) {
-                        this.deleteSelection()
-                    }
+                    if (this.canDeleteSelection()) this.deleteSelection()
                     break
+                
+                case 'F':
+                    if (this.canResetZoom()) this.resetZoom(0.75)
+                    break
+
                 default:
                     go.CommandHandler.prototype.doKeyDown.call(this)
             }
