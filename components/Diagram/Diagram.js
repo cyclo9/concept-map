@@ -125,7 +125,7 @@ export default function Diagram(props) {
                             ),
                             $("ContextMenuButton",
                                 {
-                                    "_buttonFillOver": "#ffc87c",
+                                    "_buttonFillOver": "#efc35e",
                                 },
                                 $(go.TextBlock, "Orange",
                                     {
@@ -207,7 +207,7 @@ export default function Diagram(props) {
             diagram.commit((d) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                d.model.set(node, "color", "#ffc87c")
+                d.model.set(node, "color", "#efc35e")
             })
         }
 
