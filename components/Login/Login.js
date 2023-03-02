@@ -1,9 +1,10 @@
-import crypto from 'crypto'
 import { useEffect, useRef } from 'react'
 
 import styles from './login.module.css'
 
 const Login = ({ setStatus, _ }) => {
+    const crypto = require('crypto')
+    
     const input = useRef(null)
 
     useEffect(() => {
