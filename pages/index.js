@@ -1,40 +1,57 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import useSWR from 'swr'
 
 import Login from '@/components/Login/Login.js'
-import db from "@/lib/mongo";
 import Diagram from "@/components/Diagram/Diagram.js";
 
-// * ##### DATA FETCHING #####
-export async function getServerSideProps({ req, res }) {
-    res.setHeader(
-        'Cache-Control',
-        'public, s-maxage10, stale-while-revalidate=59'
-    )
+export default function App(props) {
+    // * ### Data Fetching ###
+    const fetcher = url => fetch(url).then(res => res.json())
+    function fetchData(url) {
+        const { data, error, isLoading } = useSWR(url, fetcher)
 
-    const nodes = await db.collection("nodes").find().toArray();
-    const axons = await db.collection("axons").find().toArray();
-    const _ = await db.collection('_').find().toArray();
-
-    return {
-        props: {
-            nodes: JSON.parse(JSON.stringify(nodes)),
-            axons: JSON.parse(JSON.stringify(axons)),
-            _: JSON.parse(JSON.stringify(_)),
+        return {
+            data: data,
+            isLoading,
+            isError: error
         }
     }
-}
 
-export default function App(props) {
-    // * ##### Node & Axon #####
-    const nodeData = [];
-    const axonData = [];
-    const _ = props._[0]._
-    props.nodes.map(node => nodeData.push({ key: node.id, location: node.location, label: node.label, color: node.color }))
-    props.axons.map(axon => axonData.push({ key: axon.id, from: axon.from, to: axon.to }));
+    // * Node & Axon
+    const nodes = fetchData(`/api/nodes`)
+    const axons = fetchData(`/api/axons`)
 
+    const nodesArray = []
+    const axonArray = []
+
+    const [nodeData, setNodes] = useState([])
+    const [axonData, setAxons] = useState([])
+
+    useEffect(() => {
+        if (nodes.data != undefined) {
+            nodes.data.map(node => nodesArray.push({
+                key: node.id,
+                location: node.location,
+                label: node.label,
+                color: node.color
+            }))
+            setNodes(nodesArray)
+        }
+        if (axons.data != undefined) {
+            axons.data.map(axon => axonArray.push({
+                key: axon.id,
+                from: axon.from,
+                to: axon.to
+            }))
+            setAxons(axonArray)
+        }
+    }, [nodes.isLoading, axons.isLoading])
+
+    // * Authentication
     const [status, setStatus] = useState(false)
-    
+    const _ = fetchData(`/api/_`).data
+
     return (
         <div className="App">
             <Head>

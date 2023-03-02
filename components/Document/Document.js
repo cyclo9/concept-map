@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, forwardRef } from 'react'
 import { createEditor } from 'slate'
 import { Editable, withReact, Slate } from 'slate-react'
 import { withHistory } from 'slate-history'
+import useSWR from 'swr'
 // Remark
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -13,157 +14,81 @@ import isHotkey from 'is-hotkey'
 
 import styles from "./document.module.css"
 import { updateData } from '@/lib/api'
+import { ProcessMD } from '@/lib/md'
+import { calcMaxScrollTop, calcScaledScrollTop } from '@/lib/syncScroll'
 import Loading from '@/components/Loading/Loading.js'
 
-// * ##### DOCUMENT #####
 const Document = ({ nodeId, color }) => {
-    // * ##### DOCUMENT LOGIC #####
-    const [data, setData] = useState()
-    const [isLoading, setLoading] = useState(true)
+    // * ### Data Fetching ###
+    const fetcher = url => fetch(url).then(res => res.json())
+    const { data, error, isLoading } = useSWR(`/api/data?id=${nodeId}`, fetcher)
 
-    useEffect(() => {
-        fetch(`/api/data?id=${nodeId}`, {
-            method: 'GET',
-            cache: 'default',
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setData(data)
-                setLoading(false)
-            })
-    }, [])
-
-    // * Editor & Preview Reference Hooks
+    // * Reference Hooks
     const editorRef = useRef(null)
     const previewRef = useRef(null)
 
-    // Editor border turns blue when changes are unsaved
-    const [isSaved, setSaved] = useState(true)
-    useEffect(() => {
-        if (isSaved) editorRef.current.style.borderColor = 'black'
-        if (!isSaved) editorRef.current.style.borderColor = '#00bfff'
-    }, [isSaved])
+    // * Shared State
+    const [value, setValue] = useState()
 
-    // Sync editor and preview scrollbars
+    // * ### Synchronized Scrolling ###
     const [scroller, setScroller] = useState(null)
 
-    function calcScrollMaxTop(scrollHeight, clientHeight) {
-        // * scrollMaxTop = scrollHeight - clientHeight
-        return scrollHeight - clientHeight
-    }
-
-    function calcScaledScrollTop(scrollTop, scrollMaxTopA, scrollMaxTopB) {
-        // * editorScrollTop / editorScrollTopMax * previewScrollTopMax
-        return scrollTop / scrollMaxTopA * scrollMaxTopB
-    }
-
     function scrollPreview(e) {
+        const editorMaxScrollTop = calcMaxScrollTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
+        const previewMaxScrollTop = calcMaxScrollTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
         if (scroller != 'PREVIEW') {
-            const editorScrollTop = e.target.scrollTop
-            const editorScrollTopMax = calcScrollMaxTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
-            const previewScrollTopMax = calcScrollMaxTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
-
-            const previewScrollTop = calcScaledScrollTop(editorScrollTop, editorScrollTopMax, previewScrollTopMax)
-            previewRef.current.scrollTop = previewScrollTop
+            const editorCurrentScrollTop = e.target.scrollTop
+            previewRef.current.scrollTop = calcScaledScrollTop(editorCurrentScrollTop, editorMaxScrollTop, previewMaxScrollTop)
         }
     } 
     
     function scrollEditor(e) {
+        const editorMaxScrollTop = calcMaxScrollTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
+        const previewMaxScrollTop = calcMaxScrollTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
         if (scroller != 'EDITOR') {
-            const previewScrollTop = e.target.scrollTop
-            const editorScrollTopMax = calcScrollMaxTop(editorRef.current.scrollHeight, editorRef.current.clientHeight)
-            const previewScrollTopMax = calcScrollMaxTop(previewRef.current.scrollHeight, previewRef.current.clientHeight)
-
-            const editorScrollTop = calcScaledScrollTop(previewScrollTop, previewScrollTopMax, editorScrollTopMax)
-            editorRef.current.scrollTop = editorScrollTop
+            const previewCurrentScrollTop = e.target.scrollTop
+            editorRef.current.scrollTop = calcScaledScrollTop(previewCurrentScrollTop, previewMaxScrollTop, editorMaxScrollTop)
         }
     }
 
+    if (isLoading) return <Loading color={color} />
     return (
         <>
             <div className={styles.document}>
-                    {/* //* ##### EDITOR ##### */}
-                    <EditorWrapper
-                        ref={editorRef}
-                        scrollPreview={scrollPreview}
-                        setScroller={setScroller}
-                    >
-                        {
-                            !isLoading ?
-                                <Editor
-                                    nodeId={nodeId}
-                                    value={data}
-                                    setData={setData}
-                                    setSaved={setSaved}
-                                />
-                                : <Loading color={color} />
-                        }
-                    </EditorWrapper>
-                    {/* //* ##### PREVIEW ##### */}
-                    <PreviewWrapper
-                        ref={previewRef}
-                        scrollEditor={scrollEditor}
-                        setScroller={setScroller}
-                    >
-                        {
-                            !isLoading ?
-                                <Preview
-                                    value={data}
-                                />
-                                : <Loading color={color} />
-                        }
-                    </PreviewWrapper>
+                <Editor
+                    nodeId={nodeId}
+                    ref={editorRef}
+                    data={data}
+                    value={value}
+                    setValue={setValue}
+                    setScroller={setScroller}
+                    scrollPreview={scrollPreview}
+                />
+                <Preview
+                    ref={previewRef}
+                    data={data}
+                    value={value}
+                    setScroller={setScroller}
+                    scrollEditor={scrollEditor}
+                />
             </div>
         </>
     )
 }
 export default Document
 
-// * ##### EDITOR #####
-const Editor = ({ nodeId, value, setData, setSaved }) => {
+const Editor = forwardRef(({ nodeId, data, value, setValue, setScroller, scrollPreview }, ref) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+    const state = useRef(data);
 
-    return (
-        <>
-            <Slate
-                editor={editor}
-                value={value}
-                onChange={newValue => {
-                    if (value != newValue) setSaved(false)
-                    setData(newValue)
-                }}
-            >
-            <Editable
-                editor={editor}
-                onKeyDown={e => {
-                    switch (e.key) {
-                        case 'Enter':
-                            e.preventDefault()
-                            editor.insertText('\n'.toString())
-                            break
-                        case 'Tab':
-                            e.preventDefault()
-                            editor.insertText('  '.toString())
-                            break
-                        case '\\':
-                            e.preventDefault()
-                            editor.insertText('\\'.toString())
-                    }
+    // * Save Indicator
+    const [isSaved, setSaved] = useState(true)
+    useEffect(() => {
+        if (isSaved) ref.current.style.borderColor = 'black'
+        if (!isSaved) ref.current.style.borderColor = '#00bfff'
+    }, [isSaved])
 
-                    if (isHotkey('mod+s', e)) {
-                        e.preventDefault()
-                        updateData(nodeId, value)
-                        setSaved(true)
-                    }
-                }}
-            />
-            </Slate>
-        </>
-    )
-}
-
-// * ##### EDITOR #####
-const EditorWrapper = forwardRef(({ children, scrollPreview, setScroller }, ref) => {
+    // ? Scroller
     const mouseEnter = () => setScroller('EDITOR')
     const mouseLeave = () => setScroller(null)
 
@@ -176,51 +101,77 @@ const EditorWrapper = forwardRef(({ children, scrollPreview, setScroller }, ref)
                 onMouseEnter={mouseEnter}
                 onMouseLeave={mouseLeave}
             >
-                {children}
+                <Slate
+                    editor={editor}
+                    value={data} // Initial value
+                    onChange={newValue => {
+                        setSaved(false)
+                        setValue(newValue)
+                        state.current = newValue
+                    }}
+                >
+                    <Editable
+                        editor={editor}
+                        onKeyDown={e => {
+                            switch (e.key) {
+                                case 'Enter':
+                                    e.preventDefault()
+                                    editor.insertText('\n'.toString())
+                                    break
+                                case 'Tab':
+                                    e.preventDefault()
+                                    editor.insertText('  '.toString())
+                                    break
+                                case '\\':
+                                    e.preventDefault()
+                                    editor.insertText('\\'.toString())
+                            }
+
+                            if (isHotkey('mod+s', e)) {
+                                e.preventDefault()
+                                updateData(nodeId, state.current)
+                                setSaved(true)
+                            }
+                        }}
+                    />
+                </Slate>
             </div>
         </>
     )
 })
 
-// * ##### PREVIEW #####
-const Preview = ({ value }) => {
-    const [md, setMd] = useState('')
-    
+const Preview = forwardRef(({ data, value, setScroller, scrollEditor }, ref) => {
+    const [md, setMD] = useState(ProcessMD(data)) // Initial value
+
     useEffect(() => {
-        setMd(value[0].children[0].text)
+        if (value != undefined) setMD(ProcessMD(value))
     }, [value])
 
-    return (
-        <>
-            <ReactMarkdown
-                children={md}
-                remarkPlugins={[
-                    remarkBreaks,
-                    remarkGfm,
-                    remarkMath,
-                ]}
-                rehypePlugins={[
-                    rehypeMathjax,
-                ]}
-            />
-        </>
-    )
-}
-
-// * ##### PREVIEW LAYOUT #####
-const PreviewWrapper = forwardRef(({ children, scrollEditor, setScroller }, ref) => {
+    // ? Scroller
     const mouseEnter = () => setScroller('PREVIEW')
     const mouseLeave = () => setScroller(null)
 
     return (
-        <div
-            ref={ref}
-            className={styles.preview}
-            onScroll={scrollEditor}
-            onMouseEnter={mouseEnter}
-            onMouseLeave={mouseLeave}
-        >
-            {children}
-        </div>
+        <>
+            <div
+                ref={ref}
+                className={styles.preview}
+                onScroll={scrollEditor}
+                onMouseEnter={mouseEnter}
+                onMouseLeave={mouseLeave}
+            >
+                <ReactMarkdown
+                    children={md}
+                    remarkPlugins={[
+                        remarkBreaks,
+                        remarkGfm,
+                        remarkMath,
+                    ]}
+                    rehypePlugins={[
+                        rehypeMathjax,
+                    ]}
+                />
+            </div>
+        </>
     )
 })
