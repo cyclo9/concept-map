@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
-import isHotkey from "is-hotkey";
 
 import styles from "./diagram.module.css";
 import Popup from "@/components/Popup/Popup.js";
@@ -17,7 +16,7 @@ import {
     deleteDataList,
     deleteTaskList
 } from "../../lib/api"
-import { generateId } from "../../lib/id";
+import { generateId } from "@/lib/id";
 
 export default function Diagram(props) {
     // * ##### Diagram #####

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useSWR from 'swr'
 
 import TaskItem from './TaskItem'
 import { updateTasks } from "../../lib/api";
@@ -7,20 +8,14 @@ import Loading from "@/components/Loading/Loading.js";
 import styles from './tasklist.module.css'
 
 const Tasklist = ({ nodeId, color }) => {
-    const [tasks, setTasks] = useState([]);
-    const [isLoading, setLoading] = useState(true)
+    // * ### Data Fetching ###
+    const fetcher = url => fetch(url).then(res => res.json())
+    const { data, error, isLoading } = useSWR(`/api/tasks?id=${nodeId}`, fetcher)
 
+    const [tasks, setTasks] = useState([]);
     useEffect(() => {
-        fetch(`/api/tasks?id=${nodeId}`, {
-            method: 'GET',
-            cache: 'default',
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setTasks(data)
-                setLoading(false)
-            })
-    }, [])
+        if (data != undefined) setTasks(data)
+    }, [isLoading])
     
     // * ### Create Tasks ###
     function createTask() {
@@ -87,6 +82,7 @@ const Tasklist = ({ nodeId, color }) => {
         console.log("-! T:", { id: taskId });
     }
 
+    if (isLoading) return <Loading color={color} />
     return (
         <>
             <div>
@@ -97,7 +93,7 @@ const Tasklist = ({ nodeId, color }) => {
                         </svg>
                     </button>
                 </div>
-                {!isLoading ? <div className={styles.tasksGrid}>
+                <div className={styles.tasksGrid}>
                     {
                         tasks.map((task) => <TaskItem
                             key={task.id}
@@ -109,7 +105,7 @@ const Tasklist = ({ nodeId, color }) => {
                             deleteTask={deleteTask}
                         />)
                     }
-                </div> : <Loading color={color} />}
+                </div>
             </div>
         </>
     )
