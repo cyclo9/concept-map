@@ -21,7 +21,7 @@ import Loading from '@/components/Loading/Loading.js'
 const Document = ({ nodeId, color }) => {
     // * ### Data Fetching ###
     const fetcher = url => fetch(url).then(res => res.json())
-    const { data, error, isLoading } = useSWR(`/api/data?id=${nodeId}`, fetcher, { refreshInterval: 5000 })
+    const { data, error, isLoading } = useSWR(`/api/data?id=${nodeId}`, fetcher, { refreshInterval: 500 })
 
     // * Reference Hooks
     const editorRef = useRef(null)
