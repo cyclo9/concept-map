@@ -5,7 +5,7 @@ import useSWR from 'swr'
 import Login from '@/components/Login/Login.js'
 import Diagram from "@/components/Diagram/Diagram.js";
 
-export default function App(props) {
+export default function App() {
     // * ### Data Fetching ###
     const fetcher = url => fetch(url).then(res => res.json())
     function fetchData(url) {
