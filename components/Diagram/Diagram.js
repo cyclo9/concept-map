@@ -407,7 +407,7 @@ export default function Diagram(props) {
                     const category = modifiedNodeData[i].category;
 
                     createNode(newKey, newLocation, newLabel, color, category);
-                    if (category == 'nodes') {
+                    if (category == 'node') {
                         createDataList(newKey)
                         createTaskList(newKey)   
                     }

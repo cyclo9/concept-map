@@ -160,7 +160,7 @@ export function updateData(nodeId: string, data: string[]) {
     })
         .then(res => {
             if (res.status == 200) {
-                console.log('*D', { nodeId: nodeId }, '\n', data[0].children[0].text)
+                console.log('*D', { nodeId: nodeId }, '\n', data)
             }
         })
 }
