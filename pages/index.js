@@ -34,7 +34,8 @@ export default function App() {
                 key: node.id,
                 location: node.location,
                 label: node.label,
-                color: node.color
+                color: node.color,
+                category: node.category
             }))
             setNodes(nodesArray)
         }

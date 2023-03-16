@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
-import * as go from "gojs";
-import { ReactDiagram } from "gojs-react";
+import { useState, useRef } from 'react';
+import * as go from 'gojs';
+import { ReactDiagram } from 'gojs-react';
 
-import styles from "./diagram.module.css";
-import Popup from "@/components/Popup/Popup.js";
+import styles from './diagram.module.css';
+import Popup from '@/components/Popup/Popup.js';
 import {
     createNode,
     updateNode,
@@ -15,8 +15,8 @@ import {
     createTaskList,
     deleteDataList,
     deleteTaskList
-} from "../../lib/api"
-import { generateId } from "@/lib/id";
+} from '../../lib/api'
+import { generateId } from '@/lib/id';
 
 export default function Diagram(props) {
     // * ##### Diagram #####
@@ -24,11 +24,11 @@ export default function Diagram(props) {
         const $ = go.GraphObject.make;
         const diagram = $(go.Diagram,
             {
-                "undoManager.isEnabled": true,
+                'undoManager.isEnabled': true,
                 model: new go.GraphLinksModel({
-                    linkKeyProperty: "key"
+                    linkKeyProperty: 'key'
                 }),
-                initialPosition: go.Point.parse("0 0"),
+                initialPosition: go.Point.parse('0 0'),
                 initialScale: 0.75,
                 scrollMode: go.Diagram.InfiniteScroll
             });
@@ -42,145 +42,214 @@ export default function Diagram(props) {
                     zOrder: -1,
                     cursor: 'pointer'
                 },
-                $(go.Shape, { isPanelMain: true, stroke: "transparent",  strokeWidth: 25 }),
+                $(go.Shape, { isPanelMain: true, stroke: 'transparent',  strokeWidth: 25 }),
                 $(go.Shape, { isPanelMain: true, strokeWidth: 3 }),
                 $(go.Shape, { toArrow: 'Standard', scale: 1})
             );
-
-        //*  ### NODE TEMPLATE ###
-        diagram.nodeTemplate =
-            $(go.Node, "Auto",
+        
+        // *  ### NODE TEMPLATE ###
+        const nodeTemplate =
+            $(go.Node, 'Auto',
                 {
                     zOrder: 1
                 },
-                new go.Binding("location", "location", go.Point.parse).makeTwoWay(go.Point.stringify),
-                $(go.Shape, "Ellipse",
+                new go.Binding('location', 'location', go.Point.parse).makeTwoWay(go.Point.stringify),
+                $(go.Shape, 'Ellipse',
                     {
                         strokeWidth: 3,
                         width: 180,
                         height: 120,
-                        fill: "#ffffff",
-                        portId: "",
-                        cursor: "pointer",
+                        fill: '#ffffff',
+                        portId: '',
+                        cursor: 'pointer',
                         fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
                         toLinkable: true, toLinkableSelfNode: false, toLinkableDuplicates: false
                     },
-                    new go.Binding("fill", "color")
+                    new go.Binding('fill', 'color')
                 ),
-                $(go.Panel, "Auto",
+                $(go.Panel, 'Auto',
                     $(go.TextBlock,
                         {
-                            font: "12pt Fira Sans",
+                            font: '12pt Fira Sans',
                             editable: true,
-                            textAlign: "center",
+                            textAlign: 'center',
                             verticalAlignment: go.Spot.Center,
                             isMultiline: true,
                             wrap: go.TextBlock.WrapFit,
                             overflow: go.TextBlock.OverflowEllipsis
                         },
-                        new go.Binding("text", "label").makeTwoWay()
+                        new go.Binding('text', 'label').makeTwoWay()
                     ),
                     $(go.Shape, 'Ellipse',
                         {
-                            fill: null,
+                            fill: 'transparent',
                             stroke: null,
-                            strokeWidth: 2,
-                            width: 110,
-                            height: 63.5,
+                            width: 150,
+                            height: 75,
                         }),
                 ),
                 {
                     contextMenu:
-                        $("ContextMenu",
-                            $("ContextMenuButton",
-                                $(go.TextBlock, "Open",
+                        $('ContextMenu',
+                            $('ContextMenuButton',
+                                $(go.TextBlock, 'Open',
                                     {
                                         margin: 2,
-                                        font: "13pt Itim"
+                                        font: '13pt Itim'
                                     }),
                                 { click: open }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#FFFFFF"
+                                    '_buttonFillOver': '#FFFFFF'
                                 },
-                                $(go.TextBlock, "White",
+                                $(go.TextBlock, 'White',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeWhite }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#ff8888",
+                                    '_buttonFillOver': '#ff8888',
                                 },
-                                $(go.TextBlock, "Red",
+                                $(go.TextBlock, 'Red',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeRed }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#ffc87c",
+                                    '_buttonFillOver': '#ffc87c',
                                 },
-                                $(go.TextBlock, "Orange",
+                                $(go.TextBlock, 'Orange',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeOrange }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#fcffa4"
+                                    '_buttonFillOver': '#fcffa4'
                                 },
-                                $(go.TextBlock, "Yellow",
+                                $(go.TextBlock, 'Yellow',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeYellow }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#8fef8f"
+                                    '_buttonFillOver': '#8fef8f'
                                 },
-                                $(go.TextBlock, "Green",
+                                $(go.TextBlock, 'Green',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeGreen }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#87cefa"
+                                    '_buttonFillOver': '#87cefa'
                                 },
-                                $(go.TextBlock, "Blue",
+                                $(go.TextBlock, 'Blue',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changeBlue }
                             ),
-                            $("ContextMenuButton",
+                            $('ContextMenuButton',
                                 {
-                                    "_buttonFillOver": "#bf94e4"
+                                    '_buttonFillOver': '#bf94e4'
                                 },
-                                $(go.TextBlock, "Purple",
+                                $(go.TextBlock, 'Purple',
                                     {
                                         margin: 2,
-                                        font: "12pt Itim"
+                                        font: '12pt Itim'
                                     }),
                                 { click: changePurple }
                             ),
                         )
                 }
+            )
+
+        // * ### ANCHOR TEMPLATE ###
+        const anchorTemplate = diagram.nodeTemplate =
+            $(go.Node, 'Auto',
+                {
+                    zOrder: 1
+                },
+                new go.Binding('location', 'location', go.Point.parse).makeTwoWay(go.Point.stringify),
+                $(go.Shape, 'Circle',
+                    {
+                        strokeWidth: 3,
+                        stroke: 'black',
+                        width: 50,
+                        height: 50,
+                        fill: '#ffffff',
+                        portId: '',
+                        cursor: 'pointer',
+                        fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: false,
+                        toLinkable: true, toLinkableSelfNode: false, toLinkableDuplicates: false
+                    },
+                ),
+                $(go.Panel, 'Auto',
+                    $(go.Shape, 'Circle',
+                        {
+                            stroke: null,
+                            width: 40,
+                            height: 40,
+                            fill: 'white'
+                        }),
+                )
         )
-        
+
+        // * ### TEMPLATE MAP ###
+        const templateMap = new go.Map()
+        templateMap.add('node', nodeTemplate)
+        templateMap.add('anchor', anchorTemplate)
+        diagram.nodeTemplateMap = templateMap
+
+        function addNode(e, obj) {
+            diagram.commit((d) => {
+                // create node at cursor
+                const node = { label: 'New Node', category: 'node' };
+                d.model.addNodeData(node);
+                const part = d.findPartForData(node);
+                part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint;
+
+                // Update new node's initial properties
+                const newNode = d.model.nodeDataArray.slice(-1)[0];
+                const newKey = generateId(Math.pow(2, 8))
+                
+                d.model.set(newNode, 'key', newKey)
+                d.model.set(newNode, 'color', '#ffffff')
+            })
+        }
+
+        function addAnchor(e, obj) {
+            diagram.commit((d) => {
+                // create anchor at cursor
+                const anchor = { label: null, category: 'anchor' }
+                d.model.addNodeData(anchor)
+                const part = d.findPartForData(anchor)
+                part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint
+
+                const newAnchor = d.model.nodeDataArray.slice(-1)[0]
+                const newKey = generateId(Math.pow(2, 8))
+
+                d.model.set(newAnchor, 'key', newKey)
+                d.model.set(newAnchor, 'color', '#ffffff')
+            })
+        }
+
         // * ### OPEN SESAME ###
         function open(e, obj) {
             togglePopup(obj.part.data);
@@ -190,7 +259,7 @@ export default function Diagram(props) {
             diagram.commit((d) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                d.model.set(node, "color", "#ffffff")
+                d.model.set(node, 'color', '#ffffff')
             })
         }
 
@@ -198,7 +267,7 @@ export default function Diagram(props) {
             diagram.commit((d) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                d.model.set(node, "color", "#ff8888")
+                d.model.set(node, 'color', '#ff8888')
             })
         }
 
@@ -206,7 +275,7 @@ export default function Diagram(props) {
             diagram.commit((d) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                d.model.set(node, "color", "#ffc87c")
+                d.model.set(node, 'color', '#ffc87c')
             })
         }
 
@@ -214,7 +283,7 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "#fcffa4")
+                diagram.model.set(node, 'color', '#fcffa4')
             })
         }
 
@@ -222,7 +291,7 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "#8fef8f")
+                diagram.model.set(node, 'color', '#8fef8f')
             })
         }
 
@@ -230,7 +299,7 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "#87cefa")
+                diagram.model.set(node, 'color', '#87cefa')
             })
         }
 
@@ -238,44 +307,36 @@ export default function Diagram(props) {
             diagram.commit((diagram) => {
                 const contextMenu = obj.part;
                 const node = contextMenu.data;
-                diagram.model.set(node, "color", "#bf94e4")
+                diagram.model.set(node, 'color', '#bf94e4')
             })
         }
         
         // * ### CONTEXT MENU ###
         diagram.contextMenu =
-            $(go.Adornment, "Vertical",
-                $("ContextMenuButton",
-                    $(go.TextBlock, "Create Node",
+            $(go.Adornment, 'Vertical',
+                $('ContextMenuButton',
+                    $(go.TextBlock, 'Create Node',
                         {
                             margin: 2,
-                            font: "14pt Itim"
+                            font: '14pt Itim'
                         }),
-                    { click: addNode })
+                    { click: addNode }
+                ),
+                $('ContextMenuButton',
+                    $(go.TextBlock, 'Create Anchor',
+                        {
+                            margin: 2,
+                            font: '14pt Itim'
+                        }),
+                    { click: addAnchor }
+                )    
                 // more ContextMenuButtons would go here
             );
     
-        function addNode(e, obj) {
-            diagram.commit((d) => {
-                // create node at cursor
-                const node = { label: "New Node" };
-                d.model.addNodeData(node);
-                const part = d.findPartForData(node);
-                part.location = e.diagram.toolManager.contextMenuTool.mouseDownPoint;
-
-                // Update new node's initial properties
-                const newNode = d.model.nodeDataArray.slice(-1)[0];
-                const newKey = generateId(Math.pow(2, 8))
-                
-                d.model.set(newNode, "key", newKey);
-                d.model.set(newNode, "color", "#ffffff");
-            })
-        }
-
-        diagram.addDiagramListener("LinkDrawn", (e) => {
+        diagram.addDiagramListener('LinkDrawn', (e) => {
             // Generates an ID for the new link
             const newLink = e.diagram.model.linkDataArray.slice(-1)[0]
-            e.diagram.model.set(newLink, "key", generateId(Math.pow(2, 8)))
+            e.diagram.model.set(newLink, 'key', generateId(Math.pow(2, 8)))
         })
 
         // * ##### CUSTOM COMMANDS #####
@@ -343,11 +404,13 @@ export default function Diagram(props) {
                     const newLocation = modifiedNodeData[i].location;
                     const newLabel = modifiedNodeData[i].label;
                     const color = modifiedNodeData[i].color; // splits each char of the color into an array
+                    const category = modifiedNodeData[i].category;
 
-                    createNode(newKey, newLocation, newLabel, color);
-                    createDataList(newKey)
-                    createTaskList(newKey)
-                    console.log("+! N:", [modifiedNodeData[i]]);
+                    createNode(newKey, newLocation, newLabel, color, category);
+                    if (category == 'nodes') {
+                        createDataList(newKey)
+                        createTaskList(newKey)   
+                    }
                 }
             }
 
@@ -361,7 +424,6 @@ export default function Diagram(props) {
                         const color = modifiedNodeData[i].color;
                         
                         updateNode(key, location, label, color);
-                        console.log("*! N:", { label: label }, [modifiedNodeData[i]]);
                     }
                 }
             }
@@ -370,11 +432,11 @@ export default function Diagram(props) {
             if (removedNodeKeys != undefined) {
                 for (let i = 0; i < removedNodeKeys.length; i++) {
                     const key = removedNodeKeys[i];
+                    console.log(changes)
 
                     deleteNode(key);
                     deleteDataList(key)
                     deleteTaskList(key)
-                    console.log("-! N:", { id: key });
                 }
             }
 
@@ -387,7 +449,6 @@ export default function Diagram(props) {
                     const to = modifiedLinkData[i].to;
 
                     createAxon(key, from, to)
-                    console.log("+! A:", { from: from, to: to });
                 }
             }
 
@@ -399,7 +460,6 @@ export default function Diagram(props) {
                     const to = modifiedLinkData[0].to;
 
                     updateAxon(key, from, to)
-                    console.log("+! A:", { id: key }, { from: from, to: to })
                 }
             }
 
@@ -409,7 +469,6 @@ export default function Diagram(props) {
                     const key = removedLinkKeys[i];
 
                     deleteAxon(key);
-                    console.log("-! A:", { id: key });
                 }
             }
         } else { initial.current = 1; }
