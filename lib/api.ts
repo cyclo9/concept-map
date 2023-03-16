@@ -1,17 +1,26 @@
 // * ##### DIAGRAM ####
-export function createNode(nodeId: string, location: string, label: string, color: string) {
+export function createNode(nodeId: string, location: string, label: string, color: string, category: string) {
     fetch('/api/nodes', {
         method: 'POST',
         body: JSON.stringify({
             id: nodeId,
             location: location,
             label: label,
-            color: color
+            color: color,
+            category: category
         }),
         headers: {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('+N', '\n', [
+                    `id: ${nodeId}`,
+                    `location: ${location}`,
+                ])
+            }
+        })
 }
 
 export function updateNode(nodeId: string, location: string, label: string, color: string) {
@@ -27,6 +36,15 @@ export function updateNode(nodeId: string, location: string, label: string, colo
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('*N', { label: label }, '\n', [
+                    `id: ${nodeId}`,
+                    `location: ${location}`,
+                    `color: ${color}`
+                ])
+            }
+        })
 }
 
 export function deleteNode(nodeId: string) {
@@ -39,13 +57,18 @@ export function deleteNode(nodeId: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('-N', { id: nodeId })
+            }
+        })
 }
 
-export function createAxon(nodeId: string, from: string, to: string) {
+export function createAxon(axonId: string, from: string, to: string) {
     fetch('/api/axons', {
         method: 'POST',
         body: JSON.stringify({
-            id: nodeId,
+            id: axonId,
             from: from,
             to: to
         }),
@@ -53,13 +76,22 @@ export function createAxon(nodeId: string, from: string, to: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('+A', '\n', [
+                    `id: ${axonId}`,
+                    `from: ${from}`,
+                    `to: ${to}`
+                ])
+            }
+        })
 }
 
-export function updateAxon(nodeId: string, from: string, to: string) {
+export function updateAxon(axonId: string, from: string, to: string) {
     fetch('/api/axons', {
         method: 'PUT',
         body: JSON.stringify({
-            id: nodeId,
+            id: axonId,
             from: from,
             to: to
         }),
@@ -67,18 +99,34 @@ export function updateAxon(nodeId: string, from: string, to: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('*A', { id: axonId }, '\n', [
+                    `id: ${axonId}`,
+                    `from: ${from}`,
+                    `to: ${to}`
+                ])   
+            }
+        })
 }
 
-export function deleteAxon(nodeId: string) {
+export function deleteAxon(axonId: string) {
     fetch('/api/axons', {
         method: 'DELETE',
         body: JSON.stringify({
-            id: nodeId
+            id: axonId
         }),
         headers: {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('-A', { id: axonId }, '\n', [
+                    `id: ${axonId}`,
+                ])   
+            }
+        })
 }
 
 // * ##### DATA #####
@@ -92,6 +140,11 @@ export function createDataList(nodeId: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('+D', { nodeId: nodeId })   
+            }
+        })
 }
 
 export function updateData(nodeId: string, data: string[]) {
@@ -105,6 +158,11 @@ export function updateData(nodeId: string, data: string[]) {
             'Content-Type': 'application/json'
         },
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('*D', { nodeId: nodeId }, '\n', data)
+            }
+        })
 }
 
 export function deleteDataList(nodeId: string) {
@@ -117,6 +175,11 @@ export function deleteDataList(nodeId: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('-D', { nodeId: nodeId })   
+            }
+        })
 }
 
 // * ##### TASKS #####
@@ -130,6 +193,11 @@ export function createTaskList(nodeId: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('+T', { nodeId: nodeId })
+            }
+        })
 }
 
 export function updateTasks(nodeId: string, tasks: string[]) {
@@ -142,7 +210,12 @@ export function updateTasks(nodeId: string, tasks: string[]) {
         headers: {
             'Content-Type': 'application/json',
         },
-    });
+    })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('*T', { nodeId: nodeId }, '\n', tasks)
+            }
+        })
 }
 
 export function deleteTaskList(nodeId: string) {
@@ -155,4 +228,9 @@ export function deleteTaskList(nodeId: string) {
             'Content-Type': 'application/json'
         }
     })
+        .then(res => {
+            if (res.status == 200) {
+                console.log('-T', { nodeId: nodeId })
+            }
+        })
 }

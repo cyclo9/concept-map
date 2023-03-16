@@ -29,7 +29,6 @@ const Tasklist = ({ nodeId, color }) => {
             setTasks([newTask, ...tasks]);
 
             updateTasks(nodeId, [newTask, ...tasks]);
-            console.log("+! T:", { id: newId });
         }
     }
 
@@ -44,7 +43,6 @@ const Tasklist = ({ nodeId, color }) => {
         setTasks([...tasksCopy]);
 
         updateTasks(nodeId, [...tasksCopy]);
-        console.log("*! T:", { id: taskId })
     }
 
     // * ### Update Task Status ###
@@ -65,7 +63,6 @@ const Tasklist = ({ nodeId, color }) => {
         setTasks([...tasksCopy]);
 
         updateTasks(nodeId, [...tasksCopy]);
-        console.log("U-T:", { id: taskId });
     }
 
     // * ### Delete Tasks ###
@@ -79,7 +76,6 @@ const Tasklist = ({ nodeId, color }) => {
         setTasks([...tasksCopy]);
         
         updateTasks(nodeId, [...tasksCopy]);
-        console.log("-! T:", { id: taskId });
     }
 
     if (isLoading) return <Loading color={color} />
