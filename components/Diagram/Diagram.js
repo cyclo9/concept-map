@@ -82,10 +82,10 @@ export default function Diagram(props) {
                     ),
                     $(go.Shape, 'Ellipse',
                         {
-                            fill: 'transparent',
+                            fill: null,
                             stroke: null,
-                            width: 150,
-                            height: 75,
+                            width: 110,
+                            height: 63.5,
                         }),
                 ),
                 {
