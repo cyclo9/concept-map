@@ -41,6 +41,21 @@ export default async function handler(req, res) {
             }
         }
     }
+    
+    const axonDuplicates = []
+    for (let i = 0; i < axons.length; i++) {
+        let counter = 0
+        for (let j = 0; j < axons.length; j++) {
+            if (axons[i].id == axons[j].id) {
+                counter += 1
+                if (counter > 1) {
+                    axonDuplicates.push({
+                        id: axons[i].id,
+                    })
+                }
+            }
+        }
+    }
 
     // Check for Data duplicates
     const dataDuplicates = []
@@ -95,6 +110,31 @@ export default async function handler(req, res) {
         }
     }
 
+    const defectedAxons = []
+    for (let i = 0; i < axons.length; i++) {
+        let isFromMatched = false
+        let isToMatched = false
+        for (let j = 0; j < nodes.length; j++) {
+            if (axons[i].from == nodes[j].id) isFromMatched = true
+        }
+        for (let j = 0; j < anchors.length; j++) {
+            if (axons[i].from == anchors[j].id) isFromMatched = true
+        }
+
+        for (let j = 0; j < nodes.length; j++) {
+            if (axons[i].to == nodes[j].id) isToMatched = true
+        }
+        for (let j = 0; j < anchors.length; j++) {
+            if (axons[i].to == anchors[j].id) isToMatched = true
+        }
+        
+        if (!isFromMatched || !isToMatched) {
+            defectedAxons.push({
+                id: axons[i].id
+            })
+        }
+    }
+
     // Check for defected data
     const defectedData = []
     for (let i = 0; i < data.length; i++) {
@@ -139,16 +179,20 @@ export default async function handler(req, res) {
             Axons: axons.length,
             'Avg. Axon/Node': (axons.length / nodes.length).toFixed(3),
             'Duplicates (Nodes)': nodeDuplicates.length,
+            'Duplicates (Axons)': axonDuplicates.length,
             'Duplicates (Data)': dataDuplicates.length,
             'Duplicates (Tasks)': taskDuplicates.length,
             'Defected (Nodes)': defectedNodes.length,
+            'Defected (Axons)': defectedAxons.length,
             'Defected (Data)': defectedData.length,
             'Defected (Tasks)': defectedTasks.length
         },
         'DUPLICATES (NODES)': nodeDuplicates,
+        'DUPLICATES (AXONS)': axonDuplicates,
         'DUPLICATES (DATA)': dataDuplicates,
         'DUPLICATES (TASKS)': taskDuplicates,
         'DEFECTED (NODES)': defectedNodes,
+        'DEFECTED (AXONS)': defectedAxons,
         'DEFECTED (DATA)': defectedData,
         'DEFECTED (TASKS)': defectedTasks
     })
