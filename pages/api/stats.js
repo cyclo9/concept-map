@@ -1,7 +1,7 @@
 import db from "@/lib/mongo";
 
 export default async function handler(req, res) {
-    const nodes = await db.collection('nodes').find().project({ _id: 0 }).toArray()
+    const nodeData = await db.collection('nodes').find().project({ _id: 0 }).toArray()
     const data = await db.collection('data').find().project({ nodeId: 1, _id: 0 }).toArray()
     const tasks = await db.collection('tasks').find().project({ nodeId: 1, _id: 0 }).toArray()
     const axons = await db.collection('axons').find().project({ _id: 0 }).toArray()
@@ -9,6 +9,19 @@ export default async function handler(req, res) {
     function idToLabel(id) {
         for (let i = 0; i < nodes.length; i++) {
             if (nodes[i].id == id) return nodes[i].label
+        }
+    }
+
+    const nodes = []
+    const anchors = []
+    for (let i = 0; i < nodeData.length; i++) {
+        switch (nodeData[i].category) {
+            case 'node':
+                nodes.push(nodeData[i])
+                break
+            case 'anchor':
+                anchors.push(nodeData[i])
+                break
         }
     }
     
@@ -19,7 +32,7 @@ export default async function handler(req, res) {
         for (let j = 0; j < nodes.length; j++) {
             if (nodes[i].id == nodes[j].id) {
                 counter += 1
-                if (counter >= 2) {
+                if (counter > 1) {
                     nodeDuplicates.push({
                         id: nodes[i].id,
                         label: nodes[i].label
@@ -110,15 +123,15 @@ export default async function handler(req, res) {
         }
     }
 
-    const anchors = []
-    for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].category == 'anchor') anchors.push(nodes[i])
-    }
+    // const anchors = []
+    // for (let i = 0; i < nodes.length; i++) {
+    //     if (nodes[i].category == 'anchor') anchors.push(nodes[i])
+    // }
 
     res.status(200).json({
         'STATS': {
             Nodes: {
-                Nodes: nodes.length - anchors.length,
+                Nodes: nodes.length,
                 Anchors: anchors.length
             },
             Data: data.length,
