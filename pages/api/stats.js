@@ -25,7 +25,6 @@ export default async function handler(req, res) {
         }
     }
     
-    // Check for Node duplicates
     const nodeDuplicates = []
     for (let i = 0; i < nodes.length; i++) {
         let counter = 0
@@ -36,6 +35,21 @@ export default async function handler(req, res) {
                     nodeDuplicates.push({
                         id: nodes[i].id,
                         label: nodes[i].label
+                    })
+                }
+            }
+        }
+    }
+
+    const anchorDuplicates = []
+    for (let i = 0; i < anchors.length; i++) {
+        let counter = 0
+        for (let j = 0; j < anchors.length; j++) {
+            if (anchors[i].id == anchors[j].id) {
+                counter += 1
+                if (counter > 1) {
+                    anchorDuplicates.push({
+                        id: anchors[i].id
                     })
                 }
             }
@@ -179,6 +193,7 @@ export default async function handler(req, res) {
             Axons: axons.length,
             'Avg. Axon/Node': (axons.length / nodes.length).toFixed(3),
             'Duplicates (Nodes)': nodeDuplicates.length,
+            'Duplicates (Anchors)': anchorDuplicates.length,
             'Duplicates (Axons)': axonDuplicates.length,
             'Duplicates (Data)': dataDuplicates.length,
             'Duplicates (Tasks)': taskDuplicates.length,
@@ -188,6 +203,7 @@ export default async function handler(req, res) {
             'Defected (Tasks)': defectedTasks.length
         },
         'DUPLICATES (NODES)': nodeDuplicates,
+        'DUPLICATES (ANCHORS)': anchorDuplicates,
         'DUPLICATES (AXONS)': axonDuplicates,
         'DUPLICATES (DATA)': dataDuplicates,
         'DUPLICATES (TASKS)': taskDuplicates,
