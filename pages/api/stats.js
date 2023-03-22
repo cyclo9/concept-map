@@ -191,7 +191,7 @@ export default async function handler(req, res) {
             Data: data.length,
             Tasks: tasks.length,
             Axons: axons.length,
-            'Avg. Axon/Node': (axons.length / nodes.length).toFixed(3),
+            'Avg. Axon/Node': (axons.length / nodeData.length).toFixed(3),
             'Duplicates (Nodes)': nodeDuplicates.length,
             'Duplicates (Anchors)': anchorDuplicates.length,
             'Duplicates (Axons)': axonDuplicates.length,
