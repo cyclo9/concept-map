@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import useSWR from 'swr'
+import { useIdleTimer } from "react-idle-timer";
 
 import Login from '@/components/Login/Login.js'
 import Diagram from "@/components/Diagram/Diagram.js";
@@ -49,9 +50,32 @@ export default function App() {
         }
     }, [nodes.isLoading, axons.isLoading])
 
+
     // * Authentication
     const [status, setStatus] = useState(false)
     const _ = fetchData(`/api/_`).data
+
+    const [remaining, setRemaining] = useState(0)
+    
+    const onIdle = _ => setStatus(false)
+
+    const { getRemainingTime } = useIdleTimer({
+        onIdle,
+        // onAction
+        // onActive
+        timeout: 300_000,
+        throttle: 500 // idk what this is; copied from doc
+    })
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRemaining(Math.ceil(getRemainingTime() / 1000))
+        }, 500)
+
+        return () => {
+            clearInterval(interval)
+        }
+    })
 
     return (
         <div className="App">

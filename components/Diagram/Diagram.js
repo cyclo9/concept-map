@@ -76,7 +76,7 @@ export default function Diagram(props) {
                             verticalAlignment: go.Spot.Center,
                             isMultiline: true,
                             wrap: go.TextBlock.WrapFit,
-                            overflow: go.TextBlock.OverflowEllipsis
+                            overflow: go.TextBlock.OverflowEllipsis,
                         },
                         new go.Binding('text', 'label').makeTwoWay()
                     ),
@@ -84,8 +84,8 @@ export default function Diagram(props) {
                         {
                             fill: null,
                             stroke: null,
-                            width: 110,
-                            height: 63.5,
+                            width: 120,
+                            height: 64,
                         }),
                 ),
                 {
