@@ -23,31 +23,40 @@ export default function App() {
     const nodes = fetchData(`/api/nodes`)
     const axons = fetchData(`/api/axons`)
 
-    const nodesArray = []
-    const axonArray = []
-
     const [nodeData, setNodes] = useState([])
     const [axonData, setAxons] = useState([])
 
-    useEffect(() => {
+    function fetchNodes() {
         if (nodes.data != undefined) {
-            nodes.data.map(node => nodesArray.push({
-                key: node.id,
-                location: node.location,
-                label: node.label,
-                color: node.color,
-                category: node.category
-            }))
-            setNodes(nodesArray)
+            nodes.data.map(node => setNodes((oldValue) => [
+                ...oldValue,
+                {
+                    key: node.id,
+                    location: node.location,
+                    label: node.label,
+                    color: node.color,
+                    category: node.category
+                }
+            ]))
         }
+    }
+
+    function fetchAxons() {
         if (axons.data != undefined) {
-            axons.data.map(axon => axonArray.push({
-                key: axon.id,
-                from: axon.from,
-                to: axon.to
-            }))
-            setAxons(axonArray)
+            axons.data.map(axon => setAxons((oldValue) => [
+                ...oldValue,
+                {
+                    key: axon.id,
+                    from: axon.from,
+                    to: axon.to
+                }
+            ]))
         }
+    }
+
+    useEffect(() => {
+        fetchNodes()
+        fetchAxons()
     }, [nodes.isLoading, axons.isLoading])
 
 
@@ -57,7 +66,11 @@ export default function App() {
 
     const [remaining, setRemaining] = useState(0)
     
-    const onIdle = _ => setStatus(false)
+    const onIdle = _ => {
+        setStatus(false)
+        fetchNodes()
+        fetchAxons()
+    }
 
     const { getRemainingTime } = useIdleTimer({
         onIdle,
