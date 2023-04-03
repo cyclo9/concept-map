@@ -10,7 +10,7 @@ import styles from './tasklist.module.css'
 const Tasklist = ({ nodeId, color }) => {
     // * ### Data Fetching ###
     const fetcher = url => fetch(url).then(res => res.json())
-    const { data, error, isLoading } = useSWR(`/api/tasks?id=${nodeId}`, fetcher, { refreshInterval: 500 })
+    const { data, error, isLoading } = useSWR(`/api/tasks?id=${nodeId}`, fetcher, { refreshInterval: 200 })
 
     const [tasks, setTasks] = useState([]);
     useEffect(() => {
