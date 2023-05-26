@@ -1,5 +1,10 @@
 import './globals.css'
 import localFont from 'next/font/local'
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Interactive Knowledge Graph',
+};
 
 const gilmer = localFont({
 	src: [
@@ -16,7 +21,11 @@ const gilmer = localFont({
 	]
 })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+	children
+}: {
+	children: React.ReactNode
+}) {
 	return (
 		<html className={gilmer.className} lang="en">
 			<body>{children}</body>
