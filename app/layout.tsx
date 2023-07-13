@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 const gilmer = localFont({
 	src: [
 		{
-			path: './fonts/Gilmer/Gilmer Regular.otf',
+			path: '/fonts/Gilmer/Gilmer Regular.otf',
 			weight: '400',
-			style: 'normal'
+			style: 'normal',
 		},
 		{
-			path: './fonts/Gilmer/Gilmer Bold.otf',
+			path: '/fonts/Gilmer/Gilmer Bold.otf',
 			weight: '700',
 			style: 'normal'
 		}

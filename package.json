@@ -14,11 +14,12 @@
     "@types/react-dom": "18.2.4",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.3",
+    "gojs": "^2.3.7",
+    "gojs-react": "^1.1.2",
     "mongodb": "^5.5.0",
     "next": "^13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^2.1.5",
     "typescript": "5.0.4"
   },
   "devDependencies": {

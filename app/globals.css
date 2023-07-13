@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+	font-family: Gilmer;
+	src: url('/fonts/Gilmer/Gilmer Regular.otf')
+}
+
+@font-face {
+	font-family: Gilmer;
+	font-weight: bold;
+	src: url('/fonts/Gilmer/Gilmer Bold.otf')
+}

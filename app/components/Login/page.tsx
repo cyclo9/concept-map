@@ -11,7 +11,7 @@ export default function Login({
 }) {
 
     const crypto = require('crypto')
-    const [isLogin, setLogin] = useState<boolean>(false)
+    const [isLogin, setLogin] = useState<boolean>(true)
     const [insult, setInsult] = useState<string>('') 
 
     const inputRef = useRef<null | HTMLInputElement>(null)
@@ -24,7 +24,7 @@ export default function Login({
     ]
 
 	useEffect(() => {
-        inputRef.current!.focus()
+        // inputRef.current!.focus()
     }, [])
 
     const genRandomInt = (max: number): number => {
